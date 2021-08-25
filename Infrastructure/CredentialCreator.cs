@@ -11,12 +11,7 @@ namespace Infrastructure
 {
     public class CredentialCreator : ICredentialCreator
     {
-        private readonly Dictionary<string, string> VaccineTypeNames = new()
-        {
-            {"208","Pfizer"}, {"207","Moderna"}, {"212","J&J"},
-            {"211", "Novavax"}
-        };
-
+ 
         private readonly KeySettings _keySettings;
         private readonly IJwtSign _jwtSign;
 
@@ -67,9 +62,9 @@ namespace Infrastructure
                     doseDateTime = dose.resource.occurrenceDateTime,
                     doseLabel = "Dose " + inx,
                     lotNumber = lotNumber,
-                    manufacturer = VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString()),
+                    manufacturer = Utils.VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString()),
                     provider = provider,
-                    description = VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString())
+                    description = Utils.VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString())
                 };
 
                 vaccinationRecords.Add(vaccinationRecord);

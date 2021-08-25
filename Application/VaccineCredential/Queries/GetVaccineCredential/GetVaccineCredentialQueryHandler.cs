@@ -32,11 +32,7 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
         private readonly AppSettings _appSettings;
         private readonly IRateLimitService _rateLimitService;
 
-        private readonly Dictionary<string, string> vaccineTypes = new Dictionary<string, string>
-                        {
-                            {"208", "Pfizer"}, {"207", "Moderna"}, {"212", "J&J"},  {"211", "Novavax"}
-                        };
-
+ 
         public GetVaccineCredentialQueryHandler(IRateLimitService rateLimitService, AppSettings appSettings, IAesEncryptionService aesEncryptionService, IQrApiService qrApiService, ICompact compactor, ICredentialCreator credCreator, IJwtSign jwtSign, IJwtChunk jwtChunk, ISnowFlakeService snowFlakeService, ILogger<GetVaccineCredentialQueryHandler> logger)
         {
             _snowFlakeService = snowFlakeService;
@@ -140,7 +136,7 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
                             Doa = doa,
                             LotNumber = d.resource.lotNumber,
                             Provider = d.resource.performer[0].actor.display,
-                            Type = vaccineTypes[d.resource.vaccineCode.coding[0].code]
+                            Type = Utils.VaccineTypeNames[d.resource.vaccineCode.coding[0].code]
                         };
                         doses.Add(dose);
                     }

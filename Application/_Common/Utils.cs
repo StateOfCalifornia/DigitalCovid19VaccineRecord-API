@@ -14,11 +14,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Security;
+using System.Collections.Generic;
 
 namespace Application.Common
 {
     public class Utils
     {
+        public static readonly Dictionary<string, string> VaccineTypeNames = new()
+        {
+            { "207", "Moderna" },
+            { "208", "Pfizer" },
+            { "210", "AstraZeneca" },
+            { "211", "Novavax" },
+            { "212", "J&J" },
+            { "213", "COVID-19, unspecified" },
+        };
 
         private static AppSettings _appSettings;
         private static int messageCalls = 0;
@@ -232,7 +242,14 @@ namespace Application.Common
             {
                 var noMatchCallsCurrent = Interlocked.Increment(ref noMatchCalls);
                 ret = 1;
-                //sleep  here so timing matches as if it were found
+                if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+                {
+                    logMessage = $"RQ_EMAIL {logMessage}";
+                }
+                else
+                {
+                    logMessage = $"RQ_SMS {logMessage}"; 
+                }
                 //Email sms request that we could not find you
                 if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
                 {
