@@ -31,11 +31,8 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
         private readonly IAesEncryptionService _aesEncryptionService;
         private readonly AppSettings _appSettings;
         private readonly IRateLimitService _rateLimitService;
+        private readonly int NUMBER_OF_DOSES = 5;
 
-        private readonly Dictionary<string, string> vaccineTypes = new Dictionary<string, string>
-                        {
-                            {"208", "Pfizer"}, {"207", "Moderna"}, {"212", "J&J"},  {"211", "Novavax"}
-                        };
 
         public GetVaccineCredentialQueryHandler(IRateLimitService rateLimitService, AppSettings appSettings, IAesEncryptionService aesEncryptionService, IQrApiService qrApiService, ICompact compactor, ICredentialCreator credCreator, IJwtSign jwtSign, IJwtChunk jwtChunk, ISnowFlakeService snowFlakeService, ILogger<GetVaccineCredentialQueryHandler> logger)
         {
@@ -109,11 +106,10 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
                     // 1.  Get the json credential in clean ( no spacing ) format.
                     Vci cred = _credCreator.GetCredential(responseVc);
 
-                    //make sure cred only has at most 3 doses. (fhirBundle index starts at 0)
-                    //and pick the last three doses.
-                    if(cred.vc.credentialSubject.fhirBundle.entry.Count > 4)
+                    //make sure cred only has at most 5 doses. (fhirBundle index starts at 0)
+                    if(cred.vc.credentialSubject.fhirBundle.entry.Count > NUMBER_OF_DOSES + 1)
                     {
-                        var cntRemove = cred.vc.credentialSubject.fhirBundle.entry.Count - 4;
+                        var cntRemove = cred.vc.credentialSubject.fhirBundle.entry.Count - (NUMBER_OF_DOSES + 1);
                         cred.vc.credentialSubject.fhirBundle.entry.RemoveRange(1, cntRemove);
                     }
 
@@ -133,14 +129,14 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
                             doa = d2.ToString("MM/dd/yyyy");
                         }
                         d.resource.lotNumber = Utils.TrimString(Utils.ParseLotNumber(d.resource.lotNumber), 20);
-                        d.resource.performer[0].actor.display = Utils.TrimString(d.resource.performer[0].actor.display, 60);
-
+                        d.resource.performer = null; //Remove performer
+                        // Provider set to null U11106
                         var dose = new Dose
                         {
                             Doa = doa,
                             LotNumber = d.resource.lotNumber,
-                            Provider = d.resource.performer[0].actor.display,
-                            Type = vaccineTypes[d.resource.vaccineCode.coding[0].code]
+                            Provider = null,
+                            Type = Utils.VaccineTypeNames[d.resource.vaccineCode.coding[0].code]
                         };
                         doses.Add(dose);
                     }
