@@ -11,11 +11,6 @@ namespace Infrastructure
 {
     public class CredentialCreator : ICredentialCreator
     {
-        private readonly Dictionary<string, string> VaccineTypeNames = new()
-        {
-            {"208","Pfizer"}, {"207","Moderna"}, {"212","J&J"},
-            {"211", "Novavax"}
-        };
 
         private readonly KeySettings _keySettings;
         private readonly IJwtSign _jwtSign;
@@ -54,22 +49,14 @@ namespace Infrastructure
                 var lotNumber = dose.resource.lotNumber;
                 if (string.IsNullOrWhiteSpace(lotNumber)) { lotNumber = null; }
 
-                string provider = null;
-                if (dose.resource.performer != null && dose.resource.performer.Count > 0)
-                {
-                    provider = dose.resource.performer[0].actor.display;
-                }
-                if (string.IsNullOrWhiteSpace(provider)) { provider = null; }
-
                 var vaccinationRecord = new VaccinationRecord()
                 {
                     code = dose.resource.vaccineCode.coding[0].code.ToString(),
                     doseDateTime = dose.resource.occurrenceDateTime,
-                    doseLabel = "Dose " + inx,
+                    doseLabel = "Dose",
                     lotNumber = lotNumber,
-                    manufacturer = VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString()),
-                    provider = provider,
-                    description = VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString())
+                    manufacturer = Utils.VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString()),
+                    description = Utils.VaccineTypeNames.GetValueOrDefault(dose.resource.vaccineCode.coding[0].code.ToString())
                 };
 
                 vaccinationRecords.Add(vaccinationRecord);

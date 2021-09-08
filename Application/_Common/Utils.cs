@@ -14,11 +14,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Security;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Application.Common
 {
     public class Utils
     {
+        public static readonly ImmutableDictionary<string, string> VaccineTypeNames = new Dictionary<string, string>
+        {
+            { "207", "Moderna" },
+            { "208", "Pfizer" },
+            { "210", "AstraZeneca" },
+            { "211", "Novavax" },
+            { "212", "J&J" },
+            { "213", "COVID-19, unspecified" },
+        }.ToImmutableDictionary();
 
         private static AppSettings _appSettings;
         private static int messageCalls = 0;
@@ -212,7 +223,7 @@ namespace Application.Common
                     var message = new SendGridMessage();
                     message.AddTo(emailRecipient, $"{UppercaseFirst(request.FirstName)} {UppercaseFirst(request.LastName)}");
                     message.SetFrom(_sendGridSettings.SenderEmail, _sendGridSettings.Sender);
-                    message.SetSubject("Digital COVID-19 Vaccine Record");
+                    message.SetSubject("Digital COVID-19 Vaccine Record - QR code available");
                     message.PlainTextContent = FormatSms(Convert.ToInt32(_appSettings.LinkExpireHours), url, request.Language);
                     message.HtmlContent = FormatHtml(url, request.Language, Convert.ToInt32(_appSettings.LinkExpireHours));
                     if (conn == null)
@@ -232,7 +243,14 @@ namespace Application.Common
             {
                 var noMatchCallsCurrent = Interlocked.Increment(ref noMatchCalls);
                 ret = 1;
-                //sleep  here so timing matches as if it were found
+                if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+                {
+                    logMessage = $"RQ_EMAIL {logMessage}";
+                }
+                else
+                {
+                    logMessage = $"RQ_SMS {logMessage}"; 
+                }
                 //Email sms request that we could not find you
                 if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
                 {
@@ -248,7 +266,7 @@ namespace Application.Common
                         var message = new SendGridMessage();
                         message.AddTo(emailRecipient, $"{UppercaseFirst(request.FirstName)} {UppercaseFirst(request.LastName)}");
                         message.SetFrom(_sendGridSettings.SenderEmail, _sendGridSettings.Sender);
-                        message.SetSubject("Digital COVID-19 Vaccine Record");
+                        message.SetSubject("Digital COVID-19 Vaccine Record - Record not found");
                         message.PlainTextContent = FormatNotFoundSms(request.Language);
                         message.HtmlContent = FormatNotFoundHtml(request.Language);
                         await _emailService.SendEmailAsync(message, emailRecipient);
@@ -311,7 +329,7 @@ namespace Application.Common
                 "vi" => $"Cảm ơn quý vị đã truy cập vào cổng thông tin Hồ sơ Vắc xin COVID-19 Kỹ thuật số của Tiểu bang California. Đường liên kết để truy xuất mã hồ sơ vắc xin COVID-19 của quý vị chỉ có giá trị trong {linkExpireHours} giờ. Sau khi truy cập và lưu vào thiết bị, mã QR của quý vị sẽ không hết hạn.\nXem Hồ sơ Vắc xin: {url}",
                 "ae" => $"نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. يُعد الرابط الخاص باسترداد رمز سجل لقاح فيروس كورونا (كوفيد-19) الخاص بك ساريًا لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة. \nعرض سجل اللقاح :{url}",
                 "ph" => $"Salamat sa pagbisita sa portal ng Digital na Rekord ng Bakuna para sa COVID-19 ng Estado ng California.  {linkExpireHours} na oras lang may bisa ang link para kunin ang iyong code ng bakuna para sa COVID-19. Kapag na-access na at na-save sa iyong device, hindi mag-e-expire ang QR code.\nTingnan ang Rekord ng Bakuna: {url}",
-                _ => $"Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your COVID-19 vaccine record code is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire. \nView Vaccine Record: {url}",
+                _ => $"Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your digital vaccine record is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire. View Vaccine Record: {url}.",
             };
         }
 
@@ -329,7 +347,7 @@ namespace Application.Common
                             $"<p><b>Manténgase informado.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>Consulte la información más reciente</a> sobre el COVID-19 en California.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>Correo electrónico oficial del Departamento de Estado de California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "cn" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>数字新冠肺炎疫苗接种记录</h3>" +
@@ -341,7 +359,7 @@ namespace Application.Common
                             $"<p><b>保持关注。</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>查看有关加利福尼亚州新冠肺炎疫情的</a>最新信息。</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>加州事务部官方电子邮件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "tw" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>數位 COVID-19 疫苗接種記錄</h3>" +
@@ -353,7 +371,7 @@ namespace Application.Common
                             $"<p><b>隨時注意最新資訊。</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>檢視加州關於</a> COVID-19 的最新資訊。</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>官方加州部門電子郵件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "kr" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>디지털 코로나19 백신 기록</h3>" +
@@ -365,7 +383,7 @@ namespace Application.Common
                             $"<p><b>최신 정보를 얻으십시오.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>COVID-19 in California에서</a>최신 정보를 보십시오.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>공식 캘리포니아주 행정청 이메일</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "vi" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Hồ sơ Vắc xin COVID-19 Kỹ thuật số</h3>" +
@@ -377,19 +395,19 @@ namespace Application.Common
                             $"<p><b>Hãy luôn Cập nhật.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>Xem thông tin mới nhất</a> về COVID-19 ở California.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>Email chính thức của Tiểu bang California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "ae" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
-                            $"<h3 style='color: #f06724'>السجل الرقمي للقاح فيروس كورونا (كوفيد-19)</h3>" +
-                            $"<p>نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. يُعد الرابط الخاص باسترداد رمز سجل لقاح فيروس كورونا (كوفيد-19) الخاص بك ساريًا لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة.</p>" +
-                            $"<p><a href='{url}'>عرض سجل اللقاح</a></p>" +
-                            $"<p>تعرَّف على المزيد حول <a href='{_appSettings.CDCUrl}'></a> من مراكز مكافحة الأمراض والوقاية منها. </p>" +
-                            $"<p><b>هل لديك أي أسئلة؟</b></p>" +
-                            $"<p> لمعرفة المزيد حول سجل اللقاح<a href='{_appSettings.VaccineFAQUrl}'>تفضل بزيارة صفحة الأسئلة الشائعة لدينا</a>الرقمي لكوفيد-19 الخاص بك.</p>" +
-                            $"<p><b>ابقَ على اطلاع.</b></p>" +
-                            $"<p> كوفيد-19 في كاليفورنيا.<a href='{_appSettings.CovidWebUrl}'>اطلع على أحدث معلومات</a></p><br/>" +
+                "ae" => $"<img dir='rtl' src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                            $"<h3 dir='rtl' style='color: #f06724'>السجل الرقمي للقاح فيروس كورونا (كوفيد-19)</h3>" +
+                            $"<p dir='rtl'>نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. يُعد الرابط الخاص باسترداد رمز سجل لقاح فيروس كورونا (كوفيد-19) الخاص بك ساريًا لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة.</p>" +
+                            $"<p dir='rtl'><a href='{url}'>عرض سجل اللقاح</a></p>" +
+                            $"<p dir='rtl'>تعرَّف على المزيد حول <a href='{_appSettings.CDCUrl}'></a> من مراكز مكافحة الأمراض والوقاية منها. </p>" +
+                            $"<p dir='rtl'><b>هل لديك أي أسئلة؟</b></p>" +
+                            $"<p dir='rtl'><a href='{_appSettings.VaccineFAQUrl}'>تفضل بزيارة صفحة الأسئلة الشائعة لدينا</a > لمعرفة المزيد حول سجل اللقاح الرقمي لكوفيد-19 الخاص بك.</p>" +
+                            $"<p dir='rtl'><b>ابقَ على اطلاع.</b></p>" +
+                            $"<p dir='rtl'><a href='{_appSettings.CovidWebUrl}'>اطلع على أحدث معلومات</a> كوفيد-19 في كاليفورنيا.</p>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p dir='rtl' style='text-align:center'>البريد الإلكتروني الرسمي لوزارة الخارجية الخاص بولاية كاليفورنيا</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "ph" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital na Rekord ng Bakuna para sa COVID-19</h3>" +
@@ -401,12 +419,12 @@ namespace Application.Common
                             $"<p><b>Makibalita.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>Tingnan ang pinakabagong impormasyon</a> sa COVID-19 sa California.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>Opisyal na Email ng Departamento ng Estado ng California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 _ => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital COVID-19 Vaccine Record</h3>" +
-                            $"<p>Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your COVID-19 vaccine record code is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire.</p>" +
-                            $"<p><a href='{url}'>View Vaccine Record</a></p>" +
+                            $"<p>Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your digital COVID-19 vaccine record code is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire.</p>" +
+                            $"<p><a href='{url}'>View digital vaccine record</a></p>" +
                             $"<p>Learn more about how to <a href='{_appSettings.CDCUrl}'>protect yourself and others</a> from the Centers for Disease Control and Prevention.</p>" +
                             $"<p><b>Have questions?</b></p>" +
                             $"<p><a href='{_appSettings.VaccineFAQUrl}'>Visit our FAQ page</a> to learn more about your Digital COVID-19 Vaccine Record.</p>" +
@@ -429,7 +447,7 @@ namespace Application.Common
                 "vi" => $"Quý vị đang yêu cầu hồ sơ vắc xin COVID-19 kỹ thuật số từ MyVaccineRecord.CDPH.ca.gov. Rất tiếc, thông tin mà quý vị cung cấp không có trên hệ thống của chúng tôi. \nLiên hệ với Bộ phận Trợ giúp CDPH COVID-19: \n{_appSettings.VirtualAssistantUrl}",
                 "ae" => $"طلبت مؤخرا سجل لقاح كوفيد-19 الرقمي من MyVaccineRecord.CDPH.ca.gov. لسوء الحظ،‏ لا تطابق المعلومات التي قدمتها  أي معلومات موجودة في نظامنا. \nاتصل بمكتب المساعدة CDPH COVID-19: \n{_appSettings.VirtualAssistantUrl}",
                 "ph" => $"Humiling ka kamakailan ng digital na rekord ng bakuna para sa COVID-19 mula sa MyVaccineRecord.CDPH.ca.gov. Sa kasamaang-palad, hindi tumutugma sa impormasyon sa aming system ang impormasyong ibinigay mo. \nMakipag-ugnay sa CDPH COVID-19 Help Desk: \n{_appSettings.VirtualAssistantUrl}",
-                _ => $"You recently requested a digital COVID-19 vaccine record from MyVaccineRecord.CDPH.ca.gov. Unfortunately, the information you provided does not match information in our system. \nContact CDPH COVID-19 Virtual Assistant for help in matching your record to your contact information: \n{_appSettings.VirtualAssistantUrl}"
+                _ => $"You recently requested a Digital COVID-19 Vaccine Record. However, the information you provided does not match the information in our system. Submit another request with a different mobile phone number or email address at {_appSettings.WebUrl}. Or to get help matching your vaccine record to your contact information, use our Virtual Assistant: {_appSettings.VirtualAssistantUrl}."
             };
         }
 
@@ -445,7 +463,7 @@ namespace Application.Common
                             $"<p><b>Manténgase informado.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>Consulte la información más reciente</a> sobre el COVID-19 en California.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>Correo electrónico oficial del Departamento de Estado de California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "cn" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>数字新冠肺炎疫苗接种记录</h3>" +
@@ -455,7 +473,7 @@ namespace Application.Common
                             $"<p><b>保持关注。</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>查看有关加利福尼亚州新冠肺炎疫情的</a>最新信息。</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>加州事务部官方电子邮件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "tw" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>數位 COVID-19 疫苗接種記錄</h3>" +
@@ -465,7 +483,7 @@ namespace Application.Common
                             $"<p><b>隨時注意最新資訊。</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>檢視加州關於</a> COVID-19 的最新資訊。</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>官方加州部門電子郵件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "kr" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>디지털 코로나19 백신 기록</h3>" +
@@ -475,7 +493,7 @@ namespace Application.Common
                             $"<p><b>최신 정보를 얻으십시오.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>COVID-19 in California에서</a>최신 정보를 보십시오.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>공식 캘리포니아주 행정청 이메일</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "vi" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Hồ sơ Vắc xin COVID-19 Kỹ thuật số</h3>" +
@@ -485,11 +503,19 @@ namespace Application.Common
                             $"<p><b>Hãy luôn Cập nhật.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>Xem thông tin mới nhất</a> về COVID-19 ở California.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>Email chính thức của Tiểu bang California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "ae" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
-                            $"<h3 style='color: #f06724'>السجل الرقمي للقاح فيروس كورونا (كوفيد-19)</h3>" +
-                            $"<p>طلبت مؤخرا سجل لقاح كوفيد-19 الرقمي من MyVaccineRecord.CDPH.ca.gov. لسوء الحظ،‏ لا تطابق المعلومات التي قدمتها  أي معلومات موجودة في نظامنا. يمكنك إ<a href='{_appSettings.WebUrl}'>رسال طلب آخر</a> برقم هاتف أو عنوان بريد إلكتروني مختلف،‏ أو تستطيع الاتصال بمكتب مساعدة كوفيد-19 في كوب ودوغلاس للصحة العامة <a href='{_appSettings.VirtualAssistantUrl}'>(CDPH) للمساعدة في </a>hgمطابقة بين سجلك ومعلومات اتصالك. <p>",
+                "ae" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png' dir='rtl'><br/>" +
+                            $"<h3 dir='rtl' style='color: #f06724'>السجل الرقمي للقاح فيروس كورونا (كوفيد-19)</h3>" +
+                            $"<p dir='rtl'>لقد طلبت مؤخرًا سجل لقاح رقميًا لكوفيد-19 من <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. وللأسف، لا تتطابق المعلومات التي قدمتها مع المعلومات الموجودة في نظامنا.</p>" +
+                            $"<p dir='rtl'>يمكنك <a href='{_appSettings.WebUrl}'>إرسال طلب آخر</a> باستخدام رقم هاتف أو عنوان بريد إلكتروني مختلف، أو يمكنك الاتصال<a href='{_appSettings.VirtualAssistantUrl}'> بالمساعد الافتراضي الخاص بكوفيد-19 التابع لإدارة كاليفورنيا للصحة العامة </a>(CDPH)للمساعدة في مطابقة السجل الخاص بك مع معلومات الاتصال الخاصة بك.</p><br/>" +
+                            $"<p dir='rtl'><b>هل لديك أي أسئلة؟</b></p>" +
+                            $"<p dir='rtl'><a href='{_appSettings.VaccineFAQUrl}'>تفضل بزيارة صفحة الأسئلة الشائعة لدينا</a > لمعرفة المزيد حول سجل اللقاح الرقمي لكوفيد-19 الخاص بك.</p>" +
+                            $"<p dir='rtl'><b>ابقَ على اطلاع.</b></p>" +
+                            $"<p dir='rtl'><a href='{_appSettings.CovidWebUrl}'>اطلع على أحدث معلومات</a> كوفيد-19 في كاليفورنيا.</p>" +
+                            $"<hr>" +
+                            $"<footer><p dir='rtl' style='text-align:center'>البريد الإلكتروني الرسمي لوزارة الخارجية الخاص بولاية كاليفورنيا</p>" +
+                            $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 "ph" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital na Rekord ng Bakuna para sa COVID-19</h3>" +
                             $"<p>Kamakailan kayong humiling ng digital na record ng bakuna sa COVID-19 mula sa <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. Sa kasawiang-palad, ang impormasyong ibinigay ninyo ay hindi tumutugma sa impormasyon sa aming system. Puwede kayong <a href='{_appSettings.WebUrl}'>magsumite ng isa pang kahilingan</a> gamit ang ibang numero ng telepono o email address, o puwede ninyong i-contact ang <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 Virtual Assistant</a> para sa tulong sa pagtutugma ng inyong record sa inyong contact information.</p><br/>" +
@@ -498,12 +524,12 @@ namespace Application.Common
                             $"<p><b>Makibalita.</b></p>" +
                             $"<p><a href='{_appSettings.CovidWebUrl}'>Tingnan ang pinakabagong impormasyon</a> sa COVID-19 sa California.</p><br/>" +
                             $"<hr>" +
-                            $"<footer><p style='text-align:center'>Official California State Department Email</p>" +
+                            $"<footer><p style='text-align:center'>Opisyal na Email ng Departamento ng Estado ng California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 _ => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital COVID-19 Vaccine Record</h3>" +
-                            $"<p>You recently requested a digital COVID-19 vaccine record from <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. Unfortunately, the information you provided does not match information in our system. " +
-                            $"You can <a href='{_appSettings.WebUrl}'>submit another request</a> with a different phone number or email address, or you can contact the <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 Virtual Assistant</a> for help in matching your record to your contact information.</p><br/>" +
+                            $"<p>You recently requested a Digital COVID-19 Vaccine Record from <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. Unfortunately, the information you provided does not match information in our system. " +
+                            $"You can <a href='{_appSettings.WebUrl}'>submit another request</a> with a different mobile phone number or email address, or you can contact the <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 Virtual Assistant</a> for help in matching your record to your contact information.</p><br/>" +
                             $"<p><b>Have questions?</b></p>" +
                             $"<p><a href='{_appSettings.VaccineFAQUrl}'>Visit our FAQ page</a> to learn more about your Digital COVID-19 Vaccine Record.</p>" +
                             $"<p><b>Stay Informed.</b></p>" +
