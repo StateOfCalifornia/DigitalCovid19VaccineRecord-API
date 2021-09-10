@@ -1,10 +1,8 @@
-[[_TOC_]]
-
-#What is Digital COVID-19 Vaccine Record (DCVR)?
+# What is Digital COVID-19 Vaccine Record (DCVR)?
 
 In June 2021, the California Department of Technology (CDT) launched the Digital COVID-19 Vaccine Record (DCVR) Portal, implementing the SMART Health Card framework. A Digital Vaccine Record is an electronic vaccination record drawn from the data stored in the California immunization registry. The digital record shows the same information as a resident's paper CDC vaccine card: name, date of birth, vaccination dates, and type of vaccine received. The digital record also includes a QR code that, when scanned by a SMART Health Card reader, will display to the reader your name, date of birth, vaccine dates, and vaccine type. The QR code also confirms the vaccine record as an official record of the state of California. 
 
-#Application Architecture
+# Application Architecture
 
 California's implementation of the application is a three-tier, logically and physically separated architecture: 
 1.	A web application using the React JavaScript Library, 
