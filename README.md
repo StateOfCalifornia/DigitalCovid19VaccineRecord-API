@@ -15,9 +15,9 @@ California's implementation of the application is a three-tier, logically and ph
 
 # Code Repos
 There are a total of three code repositories:
-1.	([ReadMe - UI](/ReadMe-%2D-UI))
-2.	([ReadMe - API](/ReadMe-%2D-API))
-3.	([ReadMe - QR](/ReadMe-%2D-QR))
+1.	DigitalCovid19VaccineRecord-UI
+2.	DigitalCovid19VaccineRecord-API
+3.	DigitalCovid19VaccineRecord-QR
 
 Please view the readme file in each repo for further details.
 
