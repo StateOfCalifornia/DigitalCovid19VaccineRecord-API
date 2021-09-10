@@ -7,5 +7,7 @@ namespace Application.Common.Interfaces
     public interface IQrApiService
     {
         Task<byte[]> GetQrCodeAsync(string shc);
+
+        public byte[] GetQrCode(string shc);
     }
 }

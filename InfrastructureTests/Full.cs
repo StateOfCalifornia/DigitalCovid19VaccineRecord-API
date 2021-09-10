@@ -299,7 +299,7 @@ namespace InfrastructureTests
                 byte[] pngQr = Array.Empty<byte>();
                 using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
                 var logger = loggerFactory.CreateLogger<QrApiService>();
-                pngQr = await (new QrApiService(logger, new AppSettings { QrCodeApi = "https://testdvrqrcode.azurewebsites.net/api/QRCreate" })).GetQrCodeAsync(shcs[0]);
+                pngQr = (new QrApiService(logger, new AppSettings { QrCodeApi = "https://testdvrqrcode.azurewebsites.net/api/QRCreate" })).GetQrCode(shcs[0]);
                 System.IO.File.WriteAllBytes($"c:\\temp\\qrcodes\\QRCode_{numDoses}_{orgNameSize}.png", pngQr);
             }
             catch (Exception) { }

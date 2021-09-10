@@ -167,7 +167,7 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
 
                     var shcs = _jwtChunk.Chunk(signature);
                     
-                    var pngQr = await _qrApiService.GetQrCodeAsync(shcs[0]);
+                    var pngQr = _qrApiService.GetQrCode(shcs[0]);
                     
                     // Wallet Content
                     string walletContent = string.Empty;
