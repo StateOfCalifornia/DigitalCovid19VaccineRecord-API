@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+using Application.Common.Models;
 using Application.Common.Interfaces;
 using Application.Options;
 using Application.VaccineCredential.Queries.GetVaccineStatus;
@@ -223,7 +223,7 @@ namespace Application.Common
                     var message = new SendGridMessage();
                     message.AddTo(emailRecipient, $"{UppercaseFirst(request.FirstName)} {UppercaseFirst(request.LastName)}");
                     message.SetFrom(_sendGridSettings.SenderEmail, _sendGridSettings.Sender);
-                    message.SetSubject("Digital COVID-19 Vaccine Record - QR code available");
+                    message.SetSubject("Digital COVID-19 Vaccine Record");
                     message.PlainTextContent = FormatSms(Convert.ToInt32(_appSettings.LinkExpireHours), url, request.Language);
                     message.HtmlContent = FormatHtml(url, request.Language, Convert.ToInt32(_appSettings.LinkExpireHours));
                     if (conn == null)
@@ -266,7 +266,7 @@ namespace Application.Common
                         var message = new SendGridMessage();
                         message.AddTo(emailRecipient, $"{UppercaseFirst(request.FirstName)} {UppercaseFirst(request.LastName)}");
                         message.SetFrom(_sendGridSettings.SenderEmail, _sendGridSettings.Sender);
-                        message.SetSubject("Digital COVID-19 Vaccine Record - Record not found");
+                        message.SetSubject("Digital COVID-19 Vaccine Record");
                         message.PlainTextContent = FormatNotFoundSms(request.Language);
                         message.HtmlContent = FormatNotFoundHtml(request.Language);
                         await _emailService.SendEmailAsync(message, emailRecipient);
@@ -329,7 +329,7 @@ namespace Application.Common
                 "vi" => $"Cảm ơn quý vị đã truy cập vào cổng thông tin Hồ sơ Vắc xin COVID-19 Kỹ thuật số của Tiểu bang California. Đường liên kết để truy xuất mã hồ sơ vắc xin COVID-19 của quý vị chỉ có giá trị trong {linkExpireHours} giờ. Sau khi truy cập và lưu vào thiết bị, mã QR của quý vị sẽ không hết hạn.\nXem Hồ sơ Vắc xin: {url}",
                 "ae" => $"نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. يُعد الرابط الخاص باسترداد رمز سجل لقاح فيروس كورونا (كوفيد-19) الخاص بك ساريًا لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة. \nعرض سجل اللقاح :{url}",
                 "ph" => $"Salamat sa pagbisita sa portal ng Digital na Rekord ng Bakuna para sa COVID-19 ng Estado ng California.  {linkExpireHours} na oras lang may bisa ang link para kunin ang iyong code ng bakuna para sa COVID-19. Kapag na-access na at na-save sa iyong device, hindi mag-e-expire ang QR code.\nTingnan ang Rekord ng Bakuna: {url}",
-                _ => $"Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your digital vaccine record is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire. View Vaccine Record: {url}.",
+                _ => $"Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your COVID-19 vaccine record code is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire. \nView Vaccine Record: {url}",
             };
         }
 
@@ -423,8 +423,8 @@ namespace Application.Common
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 _ => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital COVID-19 Vaccine Record</h3>" +
-                            $"<p>Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your digital COVID-19 vaccine record code is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire.</p>" +
-                            $"<p><a href='{url}'>View digital vaccine record</a></p>" +
+                            $"<p>Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your COVID-19 vaccine record code is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire.</p>" +
+                            $"<p><a href='{url}'>View Vaccine Record</a></p>" +
                             $"<p>Learn more about how to <a href='{_appSettings.CDCUrl}'>protect yourself and others</a> from the Centers for Disease Control and Prevention.</p>" +
                             $"<p><b>Have questions?</b></p>" +
                             $"<p><a href='{_appSettings.VaccineFAQUrl}'>Visit our FAQ page</a> to learn more about your Digital COVID-19 Vaccine Record.</p>" +
@@ -447,7 +447,7 @@ namespace Application.Common
                 "vi" => $"Quý vị đang yêu cầu hồ sơ vắc xin COVID-19 kỹ thuật số từ MyVaccineRecord.CDPH.ca.gov. Rất tiếc, thông tin mà quý vị cung cấp không có trên hệ thống của chúng tôi. \nLiên hệ với Bộ phận Trợ giúp CDPH COVID-19: \n{_appSettings.VirtualAssistantUrl}",
                 "ae" => $"طلبت مؤخرا سجل لقاح كوفيد-19 الرقمي من MyVaccineRecord.CDPH.ca.gov. لسوء الحظ،‏ لا تطابق المعلومات التي قدمتها  أي معلومات موجودة في نظامنا. \nاتصل بمكتب المساعدة CDPH COVID-19: \n{_appSettings.VirtualAssistantUrl}",
                 "ph" => $"Humiling ka kamakailan ng digital na rekord ng bakuna para sa COVID-19 mula sa MyVaccineRecord.CDPH.ca.gov. Sa kasamaang-palad, hindi tumutugma sa impormasyon sa aming system ang impormasyong ibinigay mo. \nMakipag-ugnay sa CDPH COVID-19 Help Desk: \n{_appSettings.VirtualAssistantUrl}",
-                _ => $"You recently requested a Digital COVID-19 Vaccine Record. However, the information you provided does not match the information in our system. Submit another request with a different mobile phone number or email address at {_appSettings.WebUrl}. Or to get help matching your vaccine record to your contact information, use our Virtual Assistant: {_appSettings.VirtualAssistantUrl}."
+                _ => $"You recently requested a digital COVID-19 vaccine record from MyVaccineRecord.CDPH.ca.gov. Unfortunately, the information you provided does not match information in our system. \nContact CDPH COVID-19 Virtual Assistant for help in matching your record to your contact information: \n{_appSettings.VirtualAssistantUrl}"
             };
         }
 
@@ -528,8 +528,8 @@ namespace Application.Common
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
                 _ => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital COVID-19 Vaccine Record</h3>" +
-                            $"<p>You recently requested a Digital COVID-19 Vaccine Record from <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. Unfortunately, the information you provided does not match information in our system. " +
-                            $"You can <a href='{_appSettings.WebUrl}'>submit another request</a> with a different mobile phone number or email address, or you can contact the <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 Virtual Assistant</a> for help in matching your record to your contact information.</p><br/>" +
+                            $"<p>You recently requested a digital COVID-19 vaccine record from <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. Unfortunately, the information you provided does not match information in our system. " +
+                            $"You can <a href='{_appSettings.WebUrl}'>submit another request</a> with a different phone number or email address, or you can contact the <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 Virtual Assistant</a> for help in matching your record to your contact information.</p><br/>" +
                             $"<p><b>Have questions?</b></p>" +
                             $"<p><a href='{_appSettings.VaccineFAQUrl}'>Visit our FAQ page</a> to learn more about your Digital COVID-19 Vaccine Record.</p>" +
                             $"<p><b>Stay Informed.</b></p>" +
