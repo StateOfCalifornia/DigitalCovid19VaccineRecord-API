@@ -1,4 +1,4 @@
-using Application.Common.Models;
+﻿using Application.Common.Models;
 using Application.Common.Interfaces;
 using Application.Options;
 using Application.VaccineCredential.Queries.GetVaccineStatus;
@@ -190,7 +190,7 @@ namespace Application.Common
                 //Generate link url with the GUID and send text or email based on the request preference.
                 //Encyrpt the response with  aesencrypt 
                 var code = DateTime.Now.Ticks + "~" + request.Pin + "~" + response;
-                var encrypted = _aesEncryptionService.Encrypt(code, _appSettings.CodeSecret);
+                var encrypted = _aesEncryptionService.EncryptGcm(code, _appSettings.CodeSecret);
 
                 var url = $"{_appSettings.WebUrl}/qr/{request.Language}/{encrypted}";
 

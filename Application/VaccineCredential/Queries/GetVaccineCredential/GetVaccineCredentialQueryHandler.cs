@@ -71,7 +71,19 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
             
             try
             {
-                var decrypted = _aesEncryptionService.Decrypt(request.Id, _appSettings.CodeSecret);
+                var decrypted = "";
+                try
+                {
+                    //try new way first
+                    decrypted = _aesEncryptionService.DecryptGcm(request.Id, _appSettings.CodeSecret);
+                }
+                catch{
+                    //if fails try old way if configured to do so
+                    if (_appSettings.TryLegacyEncryption == "1")
+                    {
+                        decrypted = _aesEncryptionService.Decrypt(request.Id, _appSettings.CodeSecret);
+                    }
+                }
                 var dateBack = Convert.ToInt64(decrypted.Split("~")[0]);
                 pin = decrypted.Split("~")[1];
                 id = decrypted.Split("~")[2];

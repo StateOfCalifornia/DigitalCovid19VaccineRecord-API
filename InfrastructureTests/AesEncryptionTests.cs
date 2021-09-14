@@ -2,6 +2,7 @@ using Infrastructure;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,6 +17,33 @@ namespace InfrastructureTests
           public AesEncryptionTests(ITestOutputHelper logger)
         {
             _logger = logger;
+        }
+
+        [Fact]
+        public void ShouldEncryptGcm()
+        {
+            var code = ConfigUtilities.GetConfigValue("AppSettings:CodeSecret");
+            var encryptService = new AesEncryptionService(new Base64UrlUtility());
+            var text = "";
+            var actualEncrypted = "";
+
+            for (int i = 0; i < 9999; i++)
+            {
+                try
+                {
+                    text = $"{DateTime.Now.Ticks}~{Convert.ToString(i).PadLeft(4, '0')}~{RandomString(random.Next(3, 40))}";
+                    actualEncrypted = encryptService.EncryptGcm(text, code);
+                    var length = actualEncrypted.Length;
+                    var decrypted = encryptService.DecryptGcm(actualEncrypted, code);
+                    _logger.WriteLine($"lengthEncrypted:{actualEncrypted.Length} text:{text} decrypted:{decrypted}");
+                    Assert.Equal(text, decrypted);
+                }
+                catch (Exception ex)
+                {
+                    _logger.WriteLine($"{ex.Message}");
+                }
+            }
+
         }
 
         [Fact]
@@ -58,7 +86,6 @@ namespace InfrastructureTests
                 }
                 catch(Exception ex)
                 {
-                    //_logger.WriteLine($"Error: {text} {ex.Message}  usedEncrypted:{usedEncrypted}");
                     _logger.WriteLine($"{ex.Message}");
                 }
             }
