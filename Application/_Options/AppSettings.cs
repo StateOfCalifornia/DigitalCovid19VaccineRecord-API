@@ -59,6 +59,8 @@ namespace Application.Options
         public string VaccineFAQUrl { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string CDCUrl { get; set; }
+        public string TryLegacyEncryption { get; set; }
+
         #region IOptionsValidatable Implementation
         public void Validate()
         {
