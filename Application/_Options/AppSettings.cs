@@ -13,7 +13,7 @@ namespace Application.Options
         [Display(Name = "AppSettings.WebUrl")]
         [Required(AllowEmptyStrings = false)]
         public string WebUrl { get; set; }
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string QrCodeApi { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string CodeSecret { get; set; }

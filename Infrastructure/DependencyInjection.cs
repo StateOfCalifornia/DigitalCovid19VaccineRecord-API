@@ -9,6 +9,7 @@ using SendGrid;
 using Twilio;
 using Microsoft.AspNetCore.Hosting;
 using Azure.Storage.Queues;
+using System;
 
 namespace Infrastructure
 {
@@ -47,6 +48,7 @@ namespace Infrastructure
 
             AddSendGridClient(services);
             AddQueryClient(services);
+            AddQrApiService(services);
             // Register service objects
             services.AddTransient<ISnowFlakeService, SnowFlakeService>();
             services.AddTransient<IMessagingService, MessagingService>();
@@ -58,7 +60,6 @@ namespace Infrastructure
             services.AddTransient<IRateLimitService, RateLimitService>();
             services.AddTransient<ICredentialCreator, CredentialCreator>();
             services.AddTransient<IBase64UrlUtility, Base64UrlUtility>();
-            services.AddTransient<IQrApiService, QrApiService>();
             services.AddTransient<IAesEncryptionService, AesEncryptionService>();
             services.AddTransient<IDateTime, MachineDateTime>();
 
@@ -89,6 +90,16 @@ namespace Infrastructure
 
             services.AddSingleton(x => clientCredential);
             services.AddSingleton(x => clientAlternate);
+        }
+        private static void AddQrApiService(IServiceCollection services)
+        {
+            var options = services.BuildServiceProvider().GetService<IOptions<AppSettings>>().Value;
+            if(!String.IsNullOrEmpty(options.QrCodeApi)){
+                services.AddTransient<IQrApiService, QrApiService>();
+            }else{
+                services.AddTransient<IQrApiService, QrService>();
+            }
+            
         }
         #endregion
     }
