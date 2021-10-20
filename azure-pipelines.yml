@@ -12,7 +12,7 @@ pr:
     - releases/old*
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
 
 
 
@@ -31,11 +31,21 @@ steps:
 
 
 
-- task: DotNetCoreCLI@2
-  displayName: Build
+
+- task: VSBuild@1
   inputs:
-        projects: 'VaccineCredential/VaccineCredential.Api.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
+    solution: '$(solution)'
+    msbuildArgs: '--configuration $(BuildConfiguration)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+#- task: DotNetCoreCLI@2
+#  displayName: Build
+#  inputs:
+#        projects: 'VaccineCredential/VaccineCredential.Api.csproj'
+#        arguments: '--configuration $(BuildConfiguration)'
+
+
 
 
 
