@@ -34,7 +34,7 @@ steps:
 
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'
+    solution: 'VaccineCredential\VaccineCredential.Api.csproj'
     msbuildArgs: '--configuration $(BuildConfiguration)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
