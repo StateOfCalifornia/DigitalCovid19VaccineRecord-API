@@ -299,4 +299,3 @@ return vaccineCredential;
 |WEBJOBS_RESTART_TIME|The time in seconds to restart the Vaccine Credential web job if it is not running|3|
 
 
-
