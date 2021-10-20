@@ -35,8 +35,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: 'VaccineCredential\VaccineCredential.Api.csproj'
-    msbuildArgs: '--configuration $(BuildConfiguration)'
-    platform: '$(buildPlatform)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=false /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\VaccineCredential" /p:DeployIisAppPath="Default Web Site"'
     configuration: '$(buildConfiguration)'
 
 #- task: DotNetCoreCLI@2
@@ -50,9 +49,10 @@ steps:
 
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet publish'
+  displayName: Publish
   inputs:
     command: publish
+    publishWebProjects: True
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: false
 
