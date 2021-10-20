@@ -2,51 +2,78 @@
 # Build and test ASP.NET Core projects targeting the full .NET Framework.
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-trigger:
-- main
+# specific branch
+pr:
+  branches:
+    include:
+    - main
+    - releases/*
+    exclude:
+    - releases/old*
 
 pool:
   vmImage: 'windows-latest'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+
 
 steps:
 
+
 - task: UseDotNet@2
+  displayName: 'Use .NET Core sdk 5.0.x'
   inputs:
-    packageType: 'sdk'
-    version: '5.0.x'
-- task: NuGetToolInstaller@1
-  inputs:
-    versionSpec: '5.8.1'
-    checkLatest: true
+    version: 5.0.x
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
   inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: restore
 
 
 - task: DotNetCoreCLI@2
-  displayName: Publish
+  displayName: 'dotnet build'
+
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
   inputs:
     command: publish
-    publishWebProjects: True
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: false
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build web jobs'
+  inputs:
+    projects: CredentialServiceJob/CredentialServiceJob.csproj
+
+#Your build pipeline references an undefined variable named ‘BuildConfiguration’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish web jobs'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: CredentialServiceJob/CredentialServiceJob.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/VaccineCredential/App_Data\jobs\continuous\CredentialServiceJob'
+    zipAfterPublish: 
+
+#Your build pipeline references an undefined variable named ‘Parameters.ArtifactName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()    
+    ArtifactName: '$(Parameters.ArtifactName)'
+  condition: succeededOrFailed()
+
+- task: Veracode@3
+  inputs:
+    ConnectionDetailsSelection: 'Endpoint'
+    AnalysisService: 'Veracode'
+    veracodeAppProfile: 'opensourcecode.vaccinerecordapi'
+    version: '$(build.buildNumber)'
+    filepath: '$(build.artifactstagingdirectory)'
+    createProfile: true
+    maximumWaitTime: '360'
