@@ -1,10 +1,13 @@
 # ASP.NET Core (.NET Framework)
 # Build and test ASP.NET Core projects targeting the full .NET Framework.
 # Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-cortrigger:
+pr:
+  
+  branches:
+    exclude:
+    - main
 
-trigger:
-- main
 
 pool:
   vmImage: 'windows-latest'
@@ -49,4 +52,4 @@ steps:
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()    
+  condition: succeededOrFailed()  
