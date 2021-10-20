@@ -30,8 +30,13 @@ steps:
     command: restore
 
 
+
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet build'
+  displayName: Build
+  inputs:
+        projects: 'VaccineCredential/VaccineCredential.Api.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
 
 
 - task: DotNetCoreCLI@2
