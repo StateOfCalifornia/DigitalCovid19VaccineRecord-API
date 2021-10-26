@@ -13,12 +13,12 @@ namespace Infrastructure.QrApi
 {
     public class QrService : IQrApiService
     {
-        private readonly ILogger<QrApiService> _logger;
+        private readonly ILogger<QrService> _logger;
         private readonly AppSettings _appSettings;
 
         #region Constructor
 
-        public QrService(ILogger<QrApiService> logger, AppSettings appSettings)
+        public QrService(ILogger<QrService> logger, AppSettings appSettings)
         {
             _logger = logger;
             _appSettings = appSettings;
@@ -40,7 +40,7 @@ namespace Infrastructure.QrApi
                 QrSegment.MakeBytes(Encoding.ASCII.GetBytes(shcByte)),
                 QrSegment.MakeNumeric(shcNumeric)
             };
-            QrCode qrCode = QrCode.EncodeSegments(SegmentList, QrCode.Ecc.Low, 22, 22);
+            QrCode qrCode = QrCode.EncodeSegments(SegmentList, QrCode.Ecc.Low, 1, 22);
             var bitmap = qrCode.ToBitmap(10, 4);
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Png);
