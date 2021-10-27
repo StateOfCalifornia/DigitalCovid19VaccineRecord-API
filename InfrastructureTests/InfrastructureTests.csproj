@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="QrCodeApi\QRCode.png" />
+  </ItemGroup>
+
 </Project>
