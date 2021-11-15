@@ -12,12 +12,9 @@ namespace InfrastructureTests
     {
 
         [Fact]
-        public void DoIt()
-        {
-            Mainx(new string[] { });
-        }
-        
-        private void Mainx(string[] args)
+        public void DoIt() => Mainx();
+
+        private static void Mainx()
         {
             string privateKey = ConfigUtilities.GetConfigValue("Hex:PrivateKey");
             string publicKey = ConfigUtilities.GetConfigValue("Hex:PublicKey");
@@ -37,7 +34,9 @@ namespace InfrastructureTests
             var numberChars = hex.Length;
             var hexAsBytes = new byte[numberChars / 2];
             for (var i = 0; i < numberChars; i += 2)
+            {
                 hexAsBytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            }
 
             return hexAsBytes;
         }
@@ -99,13 +98,12 @@ namespace InfrastructureTests
         private static bool VerifySignedJwt(ECDsa eCDsa, string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidIssuer = "me",
                 ValidAudience = "you",
                 IssuerSigningKey = new ECDsaSecurityKey(eCDsa)
-            }, out var parsedToken);
+            }, out _);
 
             return claimsPrincipal.Identity.IsAuthenticated;
         }

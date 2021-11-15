@@ -21,7 +21,7 @@ namespace CredentialServiceJob
     public class Startup
     {
 
-        public IServiceCollection ConfigureService()
+        public static IServiceCollection ConfigureService()
         {
             var services = ConfigureServices();
 
@@ -49,6 +49,7 @@ namespace CredentialServiceJob
                  .Configure<TwilioSettings>(o => Configuration.GetSection("TwilioSettings").Bind(o))
                  .Configure<MessageQueueSettings>(o => Configuration.GetSection("MessageQueueSettings").Bind(o))
                  .Configure<KeySettings>(o => Configuration.GetSection("KeySettings").Bind(o))
+                 .Configure<CdphMessageSettings>(o => Configuration.GetSection("CDPHMessageSettings").Bind(o))
                  .AddOptions()
                  .AddLogging(configure => configure.AddApplicationInsightsWebJobs(c => c.InstrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY"))
                 .AddConsole(configure =>
@@ -63,6 +64,7 @@ namespace CredentialServiceJob
                  .AddSingleton(r => r.GetRequiredService<IOptions<TwilioSettings>>().Value)
                  .AddSingleton(r => r.GetRequiredService<IOptions<MessageQueueSettings>>().Value)
                  .AddSingleton(r => r.GetRequiredService<IOptions<KeySettings>>().Value)
+                 .AddSingleton(r => r.GetRequiredService<IOptions<CdphMessageSettings>>().Value)
 
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<SendGridSettings>>().Value)
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<SnowFlakeSettings>>().Value)
@@ -70,6 +72,7 @@ namespace CredentialServiceJob
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<TwilioSettings>>().Value)
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<MessageQueueSettings>>().Value)
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<KeySettings>>().Value)
+                 .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<CdphMessageSettings>>().Value)
 
                  .AddSingleton<IEmailService, EmailService>()
                  .AddSingleton<IBase64UrlUtility, Base64UrlUtility>()
@@ -81,7 +84,7 @@ namespace CredentialServiceJob
                  .BuildServiceProvider();
 
             AddSendGridClient(services);
-
+            AddCdphSmsMessagingClient(services);
             return services;
         }
 
@@ -93,6 +96,18 @@ namespace CredentialServiceJob
             var client = new SendGridClient(options.Key);
 
             services.AddTransient(x => client);
+        }
+
+        private static void AddCdphSmsMessagingClient(IServiceCollection services)
+        {
+            //Register the CdphMessaging Client and add necessary headers
+            services.AddHttpClient<CdphSmsMessagingClient>(client =>
+            {
+                var options = services.BuildServiceProvider().GetService<CdphMessageSettings>();
+                client.BaseAddress = new Uri(options.SmsApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("x-api-key", options.SmsKey);
+            });
         }
 
         private static IServiceCollection ConfigureServices()

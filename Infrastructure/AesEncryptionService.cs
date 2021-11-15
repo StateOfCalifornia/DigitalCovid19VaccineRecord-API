@@ -12,74 +12,10 @@ namespace Infrastructure
         private const int NONCE_MAX_SIZE = 12;
         private const int TAG_MAX_SIZE = 16;
         private readonly IBase64UrlUtility _b64Url;
-        private readonly string PreString = "PreCheck";
-        private readonly string PostString = "PostCheck";
+
         public AesEncryptionService(IBase64UrlUtility b64Url)
         {
             _b64Url = b64Url;
-        }
-
-        public string Encrypt(string text, string keyString)
-        {
-
-            var key = Encoding.UTF8.GetBytes(keyString);
-
-            using var aesAlg = Aes.Create("AesManaged");
-            using var encryptor = aesAlg.CreateEncryptor(key, aesAlg.IV);
-            using var msEncrypt = new MemoryStream();
-            using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-            using (var swEncrypt = new StreamWriter(csEncrypt))
-            {
-                swEncrypt.Write(PreString + text + PostString);
-            }
-
-            var iv = aesAlg.IV;
-
-            var decryptedContent = msEncrypt.ToArray();
-
-            var result = new byte[iv.Length + decryptedContent.Length];
-
-            Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
-            Buffer.BlockCopy(decryptedContent, 0, result, iv.Length, decryptedContent.Length);
-
-            return _b64Url.Encode(result);
-        }
-
-
-
-        public string Decrypt(string cipherText, string keyString)
-        {
-            var fullCipher = _b64Url.Decode(cipherText);
-
-            var iv = new byte[16];
-            var cipher = new byte[fullCipher.Length - iv.Length];
-
-            Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
-            Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, fullCipher.Length - iv.Length);
-
-            var key = Encoding.UTF8.GetBytes(keyString);
-
-            using var aesAlg = Aes.Create("AesManaged");
-            using var decryptor = aesAlg.CreateDecryptor(key, iv);
-            string result;
-            using (var msDecrypt = new MemoryStream(cipher))
-            {
-                using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
-                using var srDecrypt = new StreamReader(csDecrypt);
-                result = srDecrypt.ReadToEnd();
-            }
-            //strip off first and last 3 which should be AAA...AAA
-            if (!result.StartsWith(PreString))
-            {
-                throw new ArgumentException("Bad Encryption Value");
-            }
-            if (!result.EndsWith(PostString))
-            {
-                throw new ArgumentException("Bad Encryption Value");
-            }
-            result = result[this.PreString.Length..];
-            result = result.Substring(0, result.Length - PostString.Length);
-            return result;
         }
 
 
@@ -99,8 +35,6 @@ namespace Infrastructure
             var finalArray = nonce.Concat(tag).Concat(codeText).ToArray();
             return _b64Url.Encode(finalArray);
         }
-
-
 
         public string DecryptGcm(string cipherText, string keyString)
         {

@@ -91,7 +91,7 @@ namespace Infrastructure
         }
         public static byte [] SignData(byte[] data, AsymmetricKeyParameter privateKey)
         {
-            byte[] combinedBytes = new byte[0];
+            byte[] combinedBytes = Array.Empty<byte>();
             int tries = 0;
             int maxTries = 100;
             var signer = new ECDsaSigner();
@@ -149,10 +149,10 @@ namespace Infrastructure
             // see rfc7638 JWK Members Used in the Thumbprint Computation
             var thumbprint = new Thumbprint
             {
-                crv = crv,
-                kty = kty,
-                x = xCoord,
-                y = yCoord
+                Crv = crv,
+                Kty = kty,
+                X = xCoord,
+                Y = yCoord
             };
             return thumbprint;
         }

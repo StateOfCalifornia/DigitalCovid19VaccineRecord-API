@@ -10,7 +10,6 @@ namespace Application.Options
 {
     public class AppSettings : ISettingsValidate
     {
-        [Display(Name = "AppSettings.WebUrl")]
         [Required(AllowEmptyStrings = false)]
         public string WebUrl { get; set; }
         [Required(AllowEmptyStrings = true)]
@@ -59,13 +58,12 @@ namespace Application.Options
         public string VaccineFAQUrl { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string CDCUrl { get; set; }
-        public string TryLegacyEncryption { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        public string UseCDPHMessagingService { get; set; }
 
         #region IOptionsValidatable Implementation
-        public void Validate()
-        {
-            Validator.ValidateObject(this, new ValidationContext(this), validateAllProperties: true);
-        }
+        public void Validate() => Validator.ValidateObject(this, new ValidationContext(this), validateAllProperties: true);
         #endregion
     }
 }

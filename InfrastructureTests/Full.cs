@@ -26,14 +26,12 @@ namespace InfrastructureTests
 {
     public class Full
     {  
-        private static int totalCountRSAFailed = 0;
-        private static int totalCounts = 0;
-        private string shc0 = "shc:/567629095243206034602924374044603122295953265460346029254077280433602870286471674522280928613331456437653141590640220306450459085643550341424541364037063665417137241236380304375622046737407532323925433443326057360106452931611232742528435076726076394532075930645227370362275872247532202655562409710705372708277137253326005650540906446262305277446241053377100057320975270327272221033230440575680967664540582338673426407065367574665767210333756668242474446674340335032865533769377142105673765043716766214536575428093936605523007207040955597540355931687203124534397300383843730666632308425755602010702241322056435531385729060535042463716536445535603428393065581052703803241150697255432600363336266165073122000574573158732529360766537477377762106658272260612438566135624223206456126554042245092645112157302010710874096375393324426405282105115552403132457577046128081050343627656954631021443072335440506704327721305333052941600441397410284077106637311073080027572532546203753776433177745943122070635528341006765722546906055905771143603022560663095523332326455500652270723362680969083811743221413307293953052645535440322507687627443426332275717711532929254352586708605435565206712633236374775326666866323563710761560824680054232843705737762577651272106435396632037175111127274038376668606266033565055610290906366703505453432108691270703365110974534373312336127570017570607325667644623304611244747152623737397238074308127565687559454259215660660426265577694363365810043027074423333425416863110800655269352558343661455053057060737473543920";
+        private readonly string shc0 = "shc:/567629095243206034602924374044603122295953265460346029254077280433602870286471674522280928613331456437653141590640220306450459085643550341424541364037063665417137241236380304375622046737407532323925433443326057360106452931611232742528435076726076394532075930645227370362275872247532202655562409710705372708277137253326005650540906446262305277446241053377100057320975270327272221033230440575680967664540582338673426407065367574665767210333756668242474446674340335032865533769377142105673765043716766214536575428093936605523007207040955597540355931687203124534397300383843730666632308425755602010702241322056435531385729060535042463716536445535603428393065581052703803241150697255432600363336266165073122000574573158732529360766537477377762106658272260612438566135624223206456126554042245092645112157302010710874096375393324426405282105115552403132457577046128081050343627656954631021443072335440506704327721305333052941600441397410284077106637311073080027572532546203753776433177745943122070635528341006765722546906055905771143603022560663095523332326455500652270723362680969083811743221413307293953052645535440322507687627443426332275717711532929254352586708605435565206712633236374775326666866323563710761560824680054232843705737762577651272106435396632037175111127274038376668606266033565055610290906366703505453432108691270703365110974534373312336127570017570607325667644623304611244747152623737397238074308127565687559454259215660660426265577694363365810043027074423333425416863110800655269352558343661455053057060737473543920";
 
-        private string certificateString = ConfigUtilities.GetConfigValue("KeySettings:Certificate");
-        private string privateKeyString = ConfigUtilities.GetConfigValue("KeySettings:PrivateKey");
+        private readonly string certificateString = ConfigUtilities.GetConfigValue("KeySettings:Certificate");
+        private readonly string privateKeyString = ConfigUtilities.GetConfigValue("KeySettings:PrivateKey");
 
-        private string json = @"{""iss"":""https://sacodeca.blob.core.windows.net/creds"",""nbf"":637576617482895822,""vc"":{""type"":[""https://smarthealth.cards#health-card"",""https://smarthealth.cards#immunization"",""https://smarthealth.cards#covid19""],""credentialSubject"":{""fhirVersion"":""4.0.1"",""fhirBundle"":{""resourceType"":""Bundle"",""type"":""collection"",""entry"":[{""fullUrl"":""resource:0"",""resource"":{""resourceType"":""Patient"",""name"":[{""family"":""one"",""given"":[""Alpha"",""A""]}],""birthDate"":""1990-01-01""}},{""fullUrl"":""resource:1"",""resource"":{""resourceType"":""Immunization"",""status"":""completed"",""vaccineCode"":{""coding"":[{""system"":""http://hl7.org/fhir/sid/cvx"",""code"":""208""}]},""patient"":{""reference"":""resource:0""},""occurrenceDateTime"":""2021-05-01"",""lotNumber"":""ABCD1""}},{""fullUrl"":""resource:2"",""resource"":{""resourceType"":""Immunization"",""status"":""completed"",""vaccineCode"":{""coding"":[{""system"":""http://hl7.org/fhir/sid/cvx"",""code"":""208""}]},""patient"":{""reference"":""resource:0""},""occurrenceDateTime"":""2021-05-15"",""lotNumber"":""ABCD2""}}]}}}}";
+        private readonly string json = @"{""iss"":""https://sacodeca.blob.core.windows.net/creds"",""nbf"":637576617482895822,""vc"":{""type"":[""https://smarthealth.cards#health-card"",""https://smarthealth.cards#immunization"",""https://smarthealth.cards#covid19""],""credentialSubject"":{""fhirVersion"":""4.0.1"",""fhirBundle"":{""resourceType"":""Bundle"",""type"":""collection"",""entry"":[{""fullUrl"":""resource:0"",""resource"":{""resourceType"":""Patient"",""name"":[{""family"":""one"",""given"":[""Alpha"",""A""]}],""birthDate"":""1990-01-01""}},{""fullUrl"":""resource:1"",""resource"":{""resourceType"":""Immunization"",""status"":""completed"",""vaccineCode"":{""coding"":[{""system"":""http://hl7.org/fhir/sid/cvx"",""code"":""208""}]},""patient"":{""reference"":""resource:0""},""occurrenceDateTime"":""2021-05-01"",""lotNumber"":""ABCD1""}},{""fullUrl"":""resource:2"",""resource"":{""resourceType"":""Immunization"",""status"":""completed"",""vaccineCode"":{""coding"":[{""system"":""http://hl7.org/fhir/sid/cvx"",""code"":""208""}]},""patient"":{""reference"":""resource:0""},""occurrenceDateTime"":""2021-05-15"",""lotNumber"":""ABCD2""}}]}}}}";
         private readonly IJwtChunk _chunk;
         private readonly IJwtSign _jwt;
         private readonly ICompact _compact;
@@ -73,8 +71,8 @@ namespace InfrastructureTests
 
             // 4. Chunk
             var split = _chunk.Chunk(testJwt);
-            var shc0Combined = _chunk.Combine(new List<string> { shc0 });
-  
+            _ = _chunk.Combine(new List<string> { shc0 });
+
             var splitCombined = _chunk.Combine(split);
             var verified = VerifyJwt(splitCombined);
             Assert.True(verified);
@@ -95,19 +93,17 @@ namespace InfrastructureTests
             Buffer.BlockCopy(splitBytesPayload, 0, combinedBytes, splitBytesHeader.Length + periodBytes.Length, splitBytesPayload.Length);
 
             var hash = SHA256.Create().ComputeHash(combinedBytes);
-            using (var textReader = new StringReader(certificateString))
-            {
-                // Only a private key
-                Org.BouncyCastle.X509.X509Certificate bcCertificate = (X509Certificate)new PemReader(textReader).ReadObject();
-                var publicKey = bcCertificate.GetPublicKey();
+            using var textReader = new StringReader(certificateString);
+            // Only a private key
+            Org.BouncyCastle.X509.X509Certificate bcCertificate = (X509Certificate)new PemReader(textReader).ReadObject();
+            var publicKey = bcCertificate.GetPublicKey();
 
-                var verified = Verify(splitSignatureBytes, hash, publicKey);
+            var verified = Verify(splitSignatureBytes, hash, publicKey);
 
-                return verified;
-            }
+            return verified;
 
         }
-        public bool Verify(byte[] signature, byte[] data, AsymmetricKeyParameter publicKey)
+        public static bool Verify(byte[] signature, byte[] data, AsymmetricKeyParameter publicKey)
         {
             var signer = new ECDsaSigner();
 
@@ -127,16 +123,15 @@ namespace InfrastructureTests
 
             // 3. Sign
             var thumb = _jwt.GetThumbprint(_keySettings.Certificate);
-            var kid = _jwt.GetKid(thumb);
+            _ = _jwt.GetKid(thumb);
             var testJwt = _jwt.Signature(compacted);
 
 
             var verifiableCredentials = new VerifiableCredentials
             {
-                verifiableCredential = new List<string> { testJwt }
+                VerifiableCredential = new List<string> { testJwt }
             };
-
-            var jsonVerifiableResult = JsonConvert.SerializeObject(verifiableCredentials, Formatting.Indented, new JsonSerializerSettings
+            _ = JsonConvert.SerializeObject(verifiableCredentials, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
@@ -173,45 +168,42 @@ namespace InfrastructureTests
         }
 
         [Theory]
-        [InlineData(1, 40)]
-        [InlineData(1, 50)]
-
-        [InlineData(2, 10)]
-        [InlineData(2, 40)]
-        [InlineData(2, 50)]
-
-        [InlineData(3, 40, 16)]
-        [InlineData(3, 60, 20)]
-        [InlineData(3, 68, 20)]
-
-        [InlineData(4, 20)]
-        [InlineData(4, 40)]
-
+        [InlineData(1, 0)]
+        
+        [InlineData(2, 0)]
+        
+        [InlineData(3, 0, 16)]
+        [InlineData(3, 0, 20)]
+       
         [InlineData(4, 0)]
-        [InlineData(10, 0)]
-        [InlineData(15, 0, 9)]
-        [InlineData(16, 0, 9)]
-        [InlineData(17, 0, 9)]
+        
+        [InlineData(5, 0)]
+        [InlineData(6, 0)]
+        [InlineData(7, 0)]
+        [InlineData(8, 0)]
+        [InlineData(9, 0)]
         public async Task GeneralTest(int numDoses, int orgNameSize, int lotNumberSize=20)
         {
+            var totalCountRSAFailed = 0;
+            var totalCounts = 0;
             var credCreator = new CredentialCreator(_keySettings,_jwt);
  
             var entries = new List<Entry>();
             var name = new Name
             {
-                family = "Lastname "+ RandomString(42),//42
-                given = new string[] { "FirstName" + RandomString(33) }.ToList()             //33
+                Family = "Lastname "+ RandomString(42),//42
+                Given = new string[] { "FirstName" + RandomString(33) }.ToList()             //33
             };
             var names = new List<Name>();
             names.Add(name);
             var patientEntry = new Entry
             {
-                fullUrl = "resource:0",
-                resource = new Resource
+                FullUrl = "resource:0",
+                Resource = new Resource
                 {
-                    birthDate = "1955-10-01",
-                    name = names,
-                    resourceType = "Patient"                                        
+                    BirthDate = "1955-10-01",
+                    Name = names,
+                    ResourceType = "Patient"                                        
                 },
             };
 
@@ -222,59 +214,55 @@ namespace InfrastructureTests
             {
                 var dose = new Entry
                 {
-                    fullUrl = "resource:" + i,
-                    resource = new Resource
+                    FullUrl = "resource:" + i,
+                    Resource = new Resource
                     {
-                        lotNumber = "E" + RandomString(lotNumberSize-1),
-                        resourceType = "Immunization",
-                        status = "completed",
-                        patient = new Patient
+                        LotNumber = "E" + RandomString(lotNumberSize-1),
+                        ResourceType = "Immunization",
+                        Status = "completed",
+                        Patient = new Patient
                         {
-                            reference = "resource:0"
+                            Reference = "resource:0"
                         },
-                        vaccineCode = new VaccineCode { coding = new List<Coding>() },
-                        occurrenceDateTime = $"2021-03-0{i.ToString().Substring(0,1)}",
-                        performer = orgNameSize <= 0 ? null : new List<Performer>()
+                        VaccineCode = new VaccineCode { Coding = new List<Coding>() },
+                        OccurrenceDateTime = $"2021-03-0{i.ToString().Substring(0,1)}",
+                        Performer = orgNameSize <= 0 ? null : new List<Performer>()
                     }
                 };
                 if (orgNameSize > 0)
                 {
-                    dose.resource.performer.Add(new Performer() { actor = new Actor { display = $"ORG-{RandomString(orgNameSize - 4)}" } });
+                    dose.Resource.Performer.Add(new Performer() { Actor = new Actor { Display = $"ORG-{RandomString(orgNameSize - 4)}" } });
                 }
-                var code = new Coding { code = "208", system = "http://hl7.org/fhir/sid/cvx" };
-                dose.resource.vaccineCode.coding.Add(code);
+                var code = new Coding { Code = Utils.VaccineTypeNames.Keys.ToList()[i % Utils.VaccineTypeNames.Count].ToString(), System = "http://hl7.org/fhir/sid/cvx" };
+                dose.Resource.VaccineCode.Coding.Add(code);
                 entries.Add(dose);
             }
 
             var vc = new Vc
             {
-                type = (new string[] { "https://smarthealth.cards#health-card", "https://smarthealth.cards#immunization", "https://smarthealth.cards#covid19" }).ToList(),
-                credentialSubject = new CredentialSubject
+                Type = (new string[] { "https://smarthealth.cards#health-card", "https://smarthealth.cards#immunization", "https://smarthealth.cards#covid19" }).ToList(),
+                CredentialSubject = new CredentialSubject
                 {
-                    fhirVersion = "4.0.1",
-                    fhirBundle = new FhirBundle
+                    FhirVersion = "4.0.1",
+                    FhirBundle = new FhirBundle
                     {
-                        type = "collection",
-                        resourceType = "Bundle",
-                        entry = entries
+                        Type = "collection",
+                        ResourceType = "Bundle",
+                        Entry = entries
                     }
                 }
             };
             var cred = credCreator.GetCredential(vc);
-            cred.nbf = _jwt.ToUnixTimestamp(DateTime.Now);
+            cred.Nbf = _jwt.ToUnixTimestamp(DateTime.Now);
             var jsonVaccineCredential = JsonConvert.SerializeObject(cred, Formatting.None, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
-
-            // 2. Compress it
-            List<string> shcs = null;
             var signatureS = "";
             for (int i = 0; i < 1; i++)
             {
                 totalCounts++;
                 var compressedJson = (new Compact()).Compress(jsonVaccineCredential);
-                string compressedByteHex = BitConverter.ToString(compressedJson).Replace("-", "");
 
                 // 3. Get the signature
                 signatureS = _jwt.Signature(compressedJson);
@@ -284,23 +272,17 @@ namespace InfrastructureTests
                     totalCountRSAFailed++;
                 }
                 var v = VerifyJwt(signatureS);
-                Assert.True(v);
-
-                //var sigRSA = _jwt.SignWithRsaKey(compressedJson);
-                //if (_b64.Decode(sigRSA.Split(".")[2]).Length != 256)
-                //{
-                //    _output.WriteLine("Hmmmm Google?");
-                //    totalCountGoogleFailed++;
-                //}
+                Assert.True(v);                
             }
-            shcs = (new JwtChunk()).Chunk(signatureS);
+            // 2. Compress it
+            var shcs = new JwtChunk().Chunk(signatureS);
             try
             {
                 byte[] pngQr = Array.Empty<byte>();
-                using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-                var logger = loggerFactory.CreateLogger<QrApiService>();
-                pngQr = await (new QrApiService(logger, new AppSettings { QrCodeApi = "https://testdvrqrcode.azurewebsites.net/api/QRCreate" })).GetQrCodeAsync(shcs[0]);
-                System.IO.File.WriteAllBytes($"c:\\temp\\qrcodes\\QRCode_{numDoses}_{orgNameSize}.png", pngQr);
+
+                pngQr = await new QrApiService(appSettings: new AppSettings { QrCodeApi = ConfigUtilities.GetConfigValue("AppSettings:QRCodeApi") }).GetQrCodeAsync(shcs[0]);
+                File.WriteAllBytes($"c:\\temp\\qrcodes\\QRCode_{numDoses}_{orgNameSize}.png", pngQr);
+
             }
             catch (Exception) { }
             
@@ -313,7 +295,7 @@ namespace InfrastructureTests
         }
 
 
-        public byte[] Sign1(byte[] payload, AsymmetricKeyParameter privateKey)
+        public static byte[] Sign1(byte[] payload, AsymmetricKeyParameter privateKey)
         {
             var signer = SignerUtilities.GetSigner("SHA-256withECDSA");
             signer.Init(true, privateKey);
@@ -322,7 +304,7 @@ namespace InfrastructureTests
             return signature;
         }
         
-        public bool VerifySignature1(byte[] signature, byte[] message, AsymmetricKeyParameter publicKey)
+        public static bool VerifySignature1(byte[] signature, byte[] message, AsymmetricKeyParameter publicKey)
         {
 
             var verifier = SignerUtilities.GetSigner("SHA-256withECDSA");
@@ -331,7 +313,7 @@ namespace InfrastructureTests
             return verifier.VerifySignature(signature);
         }
 
-        public byte[] Sign2(byte[] payload, AsymmetricKeyParameter privateKey)
+        public static byte[] Sign2(byte[] payload, AsymmetricKeyParameter privateKey)
         {
             var signer = new ECDsaSigner();
 
@@ -347,7 +329,7 @@ namespace InfrastructureTests
             return signature;
         }
 
-        public bool VerifySignature2(byte[] signature, byte[] message, AsymmetricKeyParameter publicKey)
+        public static bool VerifySignature2(byte[] signature, byte[] message, AsymmetricKeyParameter publicKey)
         {
             var verifier = new ECDsaSigner();
             verifier.Init(false, publicKey);
@@ -356,30 +338,9 @@ namespace InfrastructureTests
             return verifier.VerifySignature(message,r,s);
         }
 
-        private AsymmetricCipherKeyPair GetKeyPair(string privateKeyString, string certString)
-        {
-            AsymmetricKeyParameter privateKey, publicKey;
+ 
 
-            using (var textReader = new StringReader(privateKeyString))
-            {
-                // Only a private key
-                var pseudoKeyPair = (AsymmetricCipherKeyPair)new PemReader(textReader).ReadObject();
-                privateKey = pseudoKeyPair.Private;
-            }
-
-            using (var textReader = new StringReader(certString))
-            {
-                // Only a private key
-                Org.BouncyCastle.X509.X509Certificate bcCertificate = (X509Certificate)new PemReader(textReader).ReadObject();
-                
-                publicKey = bcCertificate.GetPublicKey();
-            }
-
-            return new AsymmetricCipherKeyPair(publicKey, privateKey);
-
-        }
-
-        private static Random random = new Random((int)(DateTime.Now.Ticks % 1000000000));
+        private static readonly Random random = new((int)(DateTime.Now.Ticks % 1000000000));
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";// .'-,";// ! 23~`'\":;<,>.?/\\| ";// 0123456789";

@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Application.VaccineCredential.Queries.GetVaccineCredential
 {
@@ -29,86 +27,127 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
     }
     public class TranslatedString
     {
-        public string language { get; set; }
-        public string value { get; set; }
+        [JsonProperty("language")]
+        public string Language { get; set; }
+        [JsonProperty("value")]
+        public string Value { get; set; }
     }
     public class LocalizedString
     {
-        public List<TranslatedString> translatedValues { get; set; }
-        public TranslatedString defaultValue { get; set; }
+        [JsonProperty("translatedValues")]
+        public List<TranslatedString> TranslatedValues { get; set; }
+        [JsonProperty("defaultValue")]
+        public TranslatedString DefaultValue { get; set; }
     }
     public class Barcode
     {
-        public string alternateText { get; set; }
-        public LocalizedString showCodeText { get; set; }
-        public string type { get; set; }
+        [JsonProperty("alternateText")]
+        public string AlternateText { get; set; }
+        [JsonProperty("showCodeText")]
+        public LocalizedString ShowCodeText { get; set; }
+        [JsonProperty("type")]
+        public string Type { get; set; }
 
-        public string renderEncoding {get;set;}
-        public string value { get; set; }
+        [JsonProperty("renderEncoding")]
+        public string RenderEncoding {get;set;}
+        [JsonProperty("value")]
+        public string Value { get; set; }
     }
 
     public class SourceUri
     {
-        public string description { get; set; }
-        public string uri { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
+        [JsonProperty("uri")]
+        public string Uri { get; set; }
     }
 
     public class Logo
     {
-        public SourceUri sourceUri { get; set; }
+        [JsonProperty("sourceUri")]
+        public SourceUri SourceUri { get; set; }
     }
 
     public class PatientDetails
     {
-        public string dateOfBirth { get; set; }
-        public string identityAssuranceLevel { get; set; }
-        public string patientId { get; set; }
-        public string patientName { get; set; }
+        [JsonProperty("dateOfBirth")]
+        public string DateOfBirth { get; set; }
+        [JsonProperty("identityAssuranceLevel")]
+        public string IdentityAssuranceLevel { get; set; }
+        [JsonProperty("patientId")]
+        public string PatientId { get; set; }
+        [JsonProperty("patientName")]
+        public string PatientName { get; set; }
     }
 
     public class VaccinationRecord
     {
-        public string code { get; set; }
-        public string contactInfo { get; set; }
-        public string description { get; set; }
-        public string doseDateTime { get; set; }
-        public string doseLabel { get; set; }
-        public string lotNumber { get; set; }
-        public string manufacturer { get; set; }
-        public string provider { get; set; }
+        [JsonProperty("code")]
+        public string Code { get; set; }
+        [JsonProperty("contactInfo")]
+        public string ContactInfo { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
+        [JsonProperty("doseDateTime")]
+        public string DoseDateTime { get; set; }
+        [JsonProperty("doseLabel")]
+        public string DoseLabel { get; set; }
+        [JsonProperty("lotNumber")]
+        public string LotNumber { get; set; }
+        [JsonProperty("manufacturer")]
+        public string Manufacturer { get; set; }
+        [JsonProperty("provider")]
+        public string Provider { get; set; }
     }
 
     public class VaccinationDetails
     {
-        public List<VaccinationRecord> vaccinationRecord { get; set; }
+        [JsonProperty("vaccinationRecord")]
+        public List<VaccinationRecord> VaccinationRecord { get; set; }
     }
 
     public class CovidCardObject
     {
-        public string id { get; set; }
-        public string issuerId { get; set; }
-        public Barcode barcode { get; set; }
-        public string cardColorHex { get; set; }
-        public string expiration { get; set; }
-        public Logo logo { get; set; }
-        public PatientDetails patientDetails { get; set; }
-        public string title { get; set; }
-        public VaccinationDetails vaccinationDetails { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("issuerId")]
+        public string IssuerId { get; set; }
+        [JsonProperty("barcode")]
+        public Barcode Barcode { get; set; }
+        [JsonProperty("cardColorHex")]
+        public string CardColorHex { get; set; }
+        [JsonProperty("expiration")]
+        public string Expiration { get; set; }
+        [JsonProperty("logo")]
+        public Logo Logo { get; set; }
+        [JsonProperty("patientDetails")]
+        public PatientDetails PatientDetails { get; set; }
+        [JsonProperty("title")]
+        public string Title { get; set; }
+        [JsonProperty("vaccinationDetails")]
+        public VaccinationDetails VaccinationDetails { get; set; }
     }
 
     public class Payload
     {
-        public List<CovidCardObject> covidCardObjects { get; set; }
+        [JsonProperty("covidCardObjects")]
+        public List<CovidCardObject> CovidCardObjects { get; set; }
     }
 
     public class GoogleWallet
     {
-        public string iss { get; set; }
-        public string aud { get; set; }
-        public long iat { get; set; }
-        public string typ { get; set; }
-        public List<object> origins { get; set; }
-        public Payload payload { get; set; }
+        [JsonProperty("iss")]
+        public string Iss { get; set; }
+        [JsonProperty("aud")]
+        public string Aud { get; set; }
+        [JsonProperty("iat")]
+        public long Iat { get; set; }
+        [JsonProperty("typ")]
+        public string Typ { get; set; }
+        [JsonProperty("origins")]
+        public List<object> Origins { get; set; }
+        [JsonProperty("payload")]
+        public Payload Payload { get; set; }
     }
 }
 

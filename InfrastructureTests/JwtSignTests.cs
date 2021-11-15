@@ -72,17 +72,6 @@ namespace InfrastructureTests
 
         }
 
-        public void TestRsaSignAndVerify()
-        {
-
-            var data = new byte[] { 6, 5, 4, 3, 2 };
-
-            var jwt = jwtSign.SignWithRsaKey(data);
-            var ver = RsaVerify(data,Encoding.UTF8.GetBytes(jwt.Split('.')[2]));
-            Assert.StartsWith("ey", jwt);
-            Assert.True(ver);
-        }
-
 
         public (byte[], BigInteger, BigInteger) SignData(byte[] data, AsymmetricKeyParameter privateKey)
         {
@@ -109,13 +98,6 @@ namespace InfrastructureTests
             signer.Init(false, publicKey);
             var bis = signer.VerifySignature(data, r, s);
             return bis;
-        }
-
-        public bool RsaVerify(byte[] signature, byte[] data)
-        {
-            var ipCert = new System.Security.Cryptography.X509Certificates.X509Certificate2(googleCertificate);
-            var rsa = (RSACryptoServiceProvider)ipCert.PublicKey.Key;
-            return rsa.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
         [Fact]

@@ -1,86 +1,117 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Application.VaccineCredential.Queries.GetVaccineCredential
 {
     public class Name
     {
-        public string family { get; set; }
-        public List<string> given { get; set; }
+        [JsonProperty("family")]
+        public string Family { get; set; }
+        [JsonProperty("given")]
+        public List<string> Given { get; set; }
     }
 
     public class Coding
     {
-        public string system { get; set; }
-        public string code { get; set; }
+        [JsonProperty("system")]
+        public string System { get; set; }
+        [JsonProperty("code")]
+        public string Code { get; set; }
     }
 
     public class VaccineCode
     {
-        public List<Coding> coding { get; set; }
+        [JsonProperty("coding")]
+        public List<Coding> Coding { get; set; }
     }
 
     public class Patient
     {
-        public string reference { get; set; }
+        [JsonProperty("reference")]
+        public string Reference { get; set; }
     }
 
     public class Actor
     {
-        public string display { get; set; }
+        [JsonProperty("display")]
+        public string Display { get; set; }
     }
 
     public class Performer
     {
-        public Actor actor { get; set; }
+        [JsonProperty("actor")]
+        public Actor Actor { get; set; }
     }
 
     public class Resource
     {
-        public string resourceType { get; set; }
-        public List<Name> name { get; set; }
-        public string birthDate { get; set; }
-        public string status { get; set; }
-        public VaccineCode vaccineCode { get; set; }
-        public Patient patient { get; set; }
-        public string occurrenceDateTime { get; set; }
-        public string lotNumber { get; set; }
-        public List<Performer> performer { get; set; }
+        [JsonProperty("resourceType")]
+        public string ResourceType { get; set; }
+        [JsonProperty("name")]
+        public List<Name> Name { get; set; }
+        [JsonProperty("birthDate")]
+        public string BirthDate { get; set; }
+        [JsonProperty("status")]
+        public string Status { get; set; }
+        [JsonProperty("vaccineCode")]
+        public VaccineCode VaccineCode { get; set; }
+        [JsonProperty("patient")]
+        public Patient Patient { get; set; }
+        [JsonProperty("occurrenceDateTime")]
+        public string OccurrenceDateTime { get; set; }
+        [JsonProperty("lotNumber")]
+        public string LotNumber { get; set; }
+        [JsonProperty("performer")]
+        public List<Performer> Performer { get; set; }
     }
 
     public class Entry
     {
-        public string fullUrl { get; set; }
-        public Resource resource { get; set; }
+        [JsonProperty("fullUrl")]
+        public string FullUrl { get; set; }
+        [JsonProperty("resource")]
+        public Resource Resource { get; set; }
     }
 
     public class FhirBundle
     {
-        public string resourceType { get; set; }
-        public string type { get; set; }
-        public List<Entry> entry { get; set; }
+        [JsonProperty("resourceType")]
+        public string ResourceType { get; set; }
+        [JsonProperty("type")]
+        public string Type { get; set; }
+        [JsonProperty("entry")]
+        public List<Entry> Entry { get; set; }
     }
 
     public class CredentialSubject
     {
-        public string fhirVersion { get; set; }
-        public FhirBundle fhirBundle { get; set; }
+        [JsonProperty("fhirVersion")]
+        public string FhirVersion { get; set; }
+        [JsonProperty("fhirBundle")]
+        public FhirBundle FhirBundle { get; set; }
     }
 
     public class Vc
     {
-        public List<string> type { get; set; }
-        public CredentialSubject credentialSubject { get; set; }
+        [JsonProperty("type")]
+        public List<string> Type { get; set; }
+        [JsonProperty("credentialSubject")]
+        public CredentialSubject CredentialSubject { get; set; }
     }
 
     public class Vci
     {
-        public string iss { get; set; }
-        public long nbf { get; set; }
-        public Vc vc { get; set; }
+        [JsonProperty("iss")]
+        public string Iss { get; set; }
+        [JsonProperty("nbf")]
+        public long Nbf { get; set; }
+        [JsonProperty("vc")]
+        public Vc Vc { get; set; }
     }
 
     public class VerifiableCredentials
     {
-        public List<string> verifiableCredential { get; set; }
+        [JsonProperty("verifiableCredential")]
+        public List<string> VerifiableCredential { get; set; }
     }
 }

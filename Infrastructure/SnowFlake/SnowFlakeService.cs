@@ -28,7 +28,8 @@ namespace Infrastructure.SnowFlake
         #endregion
         class VcObject
         {
-           public Vc vc { get; set; }
+            [JsonProperty("vc")]
+            public Vc Vc { get; set; }
         }
         #region ISnowFlakeService Implementation
         public async Task<Vc> GetVaccineCredentialSubjectAsync(string id, CancellationToken cancellationToken)
@@ -53,10 +54,9 @@ namespace Infrastructure.SnowFlake
                 {
                     var jsonString = rdVc.GetString(0);
                     var vaccineCredentialobject = JsonConvert.DeserializeObject<VcObject>(jsonString);
-                    vaccineCredential = vaccineCredentialobject.vc;
+                    vaccineCredential = vaccineCredentialobject.Vc;
                 }
             }
-
             return vaccineCredential;
         }
 
@@ -121,7 +121,7 @@ namespace Infrastructure.SnowFlake
 
         #endregion
 
-        private DbCommand CreateCommand(SnowflakeDbConnection conn, GetVaccineCredentialStatusQuery request, string phoneQuery, string emailQuery)
+        private static DbCommand CreateCommand(SnowflakeDbConnection conn, GetVaccineCredentialStatusQuery request, string phoneQuery, string emailQuery)
         {
             var cmdVc = conn.CreateCommand();
 

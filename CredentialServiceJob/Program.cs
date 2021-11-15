@@ -65,7 +65,7 @@ namespace CredentialServiceJob
 
         public static void Main()
         {
-            var services = new Startup().ConfigureService();
+            var services = Startup.ConfigureService();
             var serviceProvider = services.BuildServiceProvider();
             var queueProcessor = serviceProvider.GetService<IQueueProcessor>();
             queueProcessor.MainProcess();
@@ -217,7 +217,6 @@ namespace CredentialServiceJob
 
         public static async Task ProcessMessage(Object requestObject)
         {
-            GetVaccineCredentialStatusQuery request = null;
             var arrayObject = (object[])requestObject;
             var message = (QueueMessage)arrayObject[0];
             var conn = (ConnectionThreadCount)arrayObject[2];
@@ -225,7 +224,7 @@ namespace CredentialServiceJob
             int processResult = Int32.MaxValue;
             try
             {
-                request = JsonConvert.DeserializeObject<GetVaccineCredentialStatusQuery>(message.Body.ToString());
+                var request = JsonConvert.DeserializeObject<GetVaccineCredentialStatusQuery>(message.Body.ToString());
 
                 var cancellationToken = new CancellationToken();
                 processResult = await util.ProcessStatusRequest(_logger, _emailService, _sendGridSettings, _messagingService, _aesEncryptionService, request, _snowFlakeService, conn.Connection, cancellationToken, message.DequeueCount);

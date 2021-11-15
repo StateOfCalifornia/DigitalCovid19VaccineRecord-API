@@ -71,19 +71,8 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
             
             try
             {
-                var decrypted = "";
-                try
-                {
-                    //try new way first
-                    decrypted = _aesEncryptionService.DecryptGcm(request.Id, _appSettings.CodeSecret);
-                }
-                catch{
-                    //if fails try old way if configured to do so
-                    if (_appSettings.TryLegacyEncryption == "1")
-                    {
-                        decrypted = _aesEncryptionService.Decrypt(request.Id, _appSettings.CodeSecret);
-                    }
-                }
+                var decrypted = _aesEncryptionService.DecryptGcm(request.Id, _appSettings.CodeSecret);
+                
                 var dateBack = Convert.ToInt64(decrypted.Split("~")[0]);
                 pin = decrypted.Split("~")[1];
                 id = decrypted.Split("~")[2];
@@ -119,42 +108,42 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
                     Vci cred = _credCreator.GetCredential(responseVc);
 
                     //make sure cred only has at most 5 doses. (fhirBundle index starts at 0)
-                    if(cred.vc.credentialSubject.fhirBundle.entry.Count > NUMBER_OF_DOSES + 1)
+                    if(cred.Vc.CredentialSubject.FhirBundle.Entry.Count > NUMBER_OF_DOSES + 1)
                     {
-                        var cntRemove = cred.vc.credentialSubject.fhirBundle.entry.Count - (NUMBER_OF_DOSES + 1);
-                        cred.vc.credentialSubject.fhirBundle.entry.RemoveRange(1, cntRemove);
+                        var cntRemove = cred.Vc.CredentialSubject.FhirBundle.Entry.Count - (NUMBER_OF_DOSES + 1);
+                        cred.Vc.CredentialSubject.FhirBundle.Entry.RemoveRange(1, cntRemove);
                     }
 
                     var dob = "";
-                    if (DateTime.TryParse(cred.vc.credentialSubject.fhirBundle.entry[0].resource.birthDate, out DateTime dateOfBirth))
+                    if (DateTime.TryParse(cred.Vc.CredentialSubject.FhirBundle.Entry[0].Resource.BirthDate, out DateTime dateOfBirth))
                     {
                         dob = dateOfBirth.ToString("MM/dd/yyyy");
                     }
 
                     var doses = new List<Dose>();
-                    for (int ix = 1; ix < cred.vc.credentialSubject.fhirBundle.entry.Count; ix++)
+                    for (int ix = 1; ix < cred.Vc.CredentialSubject.FhirBundle.Entry.Count; ix++)
                         {
-                        var d = cred.vc.credentialSubject.fhirBundle.entry[ix];
+                        var d = cred.Vc.CredentialSubject.FhirBundle.Entry[ix];
                         var doa = "";
-                        if (DateTime.TryParse(d.resource.occurrenceDateTime, out var d2))
+                        if (DateTime.TryParse(d.Resource.OccurrenceDateTime, out var d2))
                         {
                             doa = d2.ToString("MM/dd/yyyy");
                         }
-                        d.resource.lotNumber = Utils.TrimString(Utils.ParseLotNumber(d.resource.lotNumber), 20);
-                        d.resource.performer = null; //Remove performer
+                        d.Resource.LotNumber = Utils.TrimString(Utils.ParseLotNumber(d.Resource.LotNumber), 20);
+                        d.Resource.Performer = null; //Remove performer
                         // Provider set to null U11106
                         var dose = new Dose
                         {
                             Doa = doa,
-                            LotNumber = d.resource.lotNumber,
+                            LotNumber = d.Resource.LotNumber,
                             Provider = null,
-                            Type = Utils.VaccineTypeNames[d.resource.vaccineCode.coding[0].code]
+                            Type = Utils.VaccineTypeNames[d.Resource.VaccineCode.Coding[0].Code]
                         };
                         doses.Add(dose);
                     }
-                    var firstName = cred.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].given[0];
+                    var firstName = cred.Vc.CredentialSubject.FhirBundle.Entry[0].Resource.Name[0].Given[0];
 
-                    var lastName = cred.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].family;
+                    var lastName = cred.Vc.CredentialSubject.FhirBundle.Entry[0].Resource.Name[0].Family;
 
                     var jsonVaccineCredential = JsonConvert.SerializeObject(cred, Formatting.None, new JsonSerializerSettings
                     {
@@ -169,7 +158,7 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
                     
                     var verifiableCredentials = new VerifiableCredentials
                     {
-                        verifiableCredential = new List<string> { signature }
+                        VerifiableCredential = new List<string> { signature }
                     };
 
                     var jsonVerifiableResult = JsonConvert.SerializeObject(verifiableCredentials, Formatting.Indented, new JsonSerializerSettings
@@ -197,8 +186,17 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
                                 {
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
-
-                                walletContent = $"{_appSettings.GoogleWalletUrl}{ _jwtSign.SignWithRsaKey(Encoding.UTF8.GetBytes(jsonGoogleWallet))}";
+                                var jwt = $"{_jwtSign.SignWithRsaKey(Encoding.UTF8.GetBytes(jsonGoogleWallet))}";
+                                if (_appSettings.GoogleWalletUrl.Contains("<jwt>"))
+                                {
+                                    //new way with intent://
+                                    walletContent = $"{_appSettings.GoogleWalletUrl}".Replace("<jwt>", jwt);
+                                }
+                                else
+                                {
+                                    //old way with just https://
+                                    walletContent = $"{_appSettings.GoogleWalletUrl}{jwt}";
+                                }
                                 break;
                             default:
                                 break;

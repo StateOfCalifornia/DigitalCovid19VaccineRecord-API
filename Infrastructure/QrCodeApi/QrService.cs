@@ -13,27 +13,14 @@ namespace Infrastructure.QrApi
 {
     public class QrService : IQrApiService
     {
-        private readonly ILogger<QrService> _logger;
-        private readonly AppSettings _appSettings;
-
-        #region Constructor
-
-        public QrService(ILogger<QrService> logger, AppSettings appSettings)
-        {
-            _logger = logger;
-            _appSettings = appSettings;
-        }
-
-
-        #endregion
 
         #region ISnowFlakeService Implementation
 
         public async Task<byte[]> GetQrCodeAsync(string shc)
         {
             var shcByteIndex = shc.LastIndexOf('/');
-            var shcByte = shc.Substring(0,shcByteIndex+1);
-            var shcNumeric = shc.Substring(shcByteIndex+1);
+            var shcByte = shc.Substring(0, shcByteIndex + 1);
+            var shcNumeric = shc[(shcByteIndex + 1)..];
 
             List<QrSegment> SegmentList = new List<QrSegment>()
             {
@@ -42,7 +29,7 @@ namespace Infrastructure.QrApi
             };
             QrCode qrCode = QrCode.EncodeSegments(SegmentList, QrCode.Ecc.Low, 1, 22);
             var bitmap = qrCode.ToBitmap(10, 4);
-            MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Png);
             return await Task.FromResult<byte[]>(ms.ToArray());
         }

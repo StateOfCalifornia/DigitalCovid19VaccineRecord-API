@@ -13,7 +13,10 @@ namespace InfrastructureTests
 
         public static string GetConfigValue(string keyName)
         {
-            if (_config == null) _config = GetConfig().GetSection("secrets");
+            if (_config == null)
+            {
+                _config = GetConfig().GetSection("secrets");
+            }
             var value = _config[keyName];
 
             return value;
@@ -21,7 +24,10 @@ namespace InfrastructureTests
 
         internal static IConfiguration GetConfig()
         {
-            if (_configuration != null) return _configuration;
+            if (_configuration != null)
+            {
+                return _configuration;
+            }
 
             // the type specified here is just so the secrets library can 
             // find the UserSecretId we added in the csproj file
@@ -35,10 +41,16 @@ namespace InfrastructureTests
 
             // From either local secrets or app config, get connection info for Azure Vault.
             var clientId = config["ClientId"];
-            if (string.IsNullOrEmpty(clientId)) clientId = Environment.GetEnvironmentVariable("CLIENTID");
+            if (string.IsNullOrEmpty(clientId))
+            {
+                clientId = Environment.GetEnvironmentVariable("CLIENTID");
+            }
 
             var key = config["Key"];
-            if (string.IsNullOrEmpty(key)) key = Environment.GetEnvironmentVariable("KEY");
+            if (string.IsNullOrEmpty(key))
+            {
+                key = Environment.GetEnvironmentVariable("KEY");
+            }
 
            
 
