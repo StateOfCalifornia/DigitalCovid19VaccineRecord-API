@@ -11,7 +11,12 @@ California's implementation of the application is a three-tier, logically and ph
 
 # Twilio SMS and SendGrid API 
 - Once the API determines that information submitted matches an existing record in the immunization registry, a 'found' message is sent via Twilio (SMS) or SendGrid (email). 
-- If a match is not found, a failure message is sent via Twilio (SMS) or SendGrid (email). 
+- If a match is not found, a failure message is sent via Twilio (SMS) or SendGrid (email).
+
+> **Note:** When sending more than 1000 SMS per day, Twilio recommends obtaining a [verified toll-free number](https://support.twilio.com/hc/en-us/articles/360038172934-Information-and-best-practices-for-using-Toll-Free-SMS-and-MMS-in-the-US-and-Canada#h_01F4T72QT23VCZ43PZPX1CRT5G) to reduce the liklihood of carrier spam filtering. This process can take 5-7 business days.
+
+> **Note:** Be sure to follow [SendGrid's best practices](https://sendgrid.com/blog/8-best-practices-to-improve-your-email-deliverability/) for achieving good email delivery rates. Following a [30-day email IP warmup schedule](https://sendgrid.com/resource/email-guide-ip-warm-up/) is recommended.
+
 
 # Code Repos
 There are a total of three code repositories:
