@@ -10,14 +10,12 @@ namespace Infrastructure.QrApi
 {
     public class QrApiService : IQrApiService
     {
-        private readonly ILogger<QrApiService> _logger;
         private readonly AppSettings _appSettings;
 
         #region Constructor
 
-        public QrApiService(ILogger<QrApiService> logger, AppSettings appSettings)
+        public QrApiService(AppSettings appSettings)
         {
-            _logger = logger;
             _appSettings = appSettings;
         }
 

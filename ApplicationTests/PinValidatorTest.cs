@@ -33,7 +33,6 @@ namespace ApplicationTests
 
         public void ValidatePinShouldReturnAppropriateStatus(string pin, int pinStatus)
         {
-            var util = new Utils(new Application.Options.AppSettings());
             var res = Utils.ValidatePin(pin);
             Assert.Equal(pinStatus, res);
         }
@@ -59,22 +58,25 @@ namespace ApplicationTests
             Assert.Equal(expected, res);
         }
 
-        [InlineData(0,0,false)]
+        [InlineData(1, 0, false)]
         [InlineData(110, 0, false)]
         [InlineData(100000005, 0, false)]
-        [InlineData(1, 0, false)]
         [InlineData(98, 0, false)]
         [InlineData(99, 0, false)]
+
+        [InlineData(98, 99, true)]
+        [InlineData(99, 99, true)]
+        [InlineData(100, 99, false)]
+        [InlineData(101, 99, true)]
+
         [InlineData(100, 0, false)]
         [InlineData(101, 0, false)]
-        [InlineData(0, 1, true)]
-        [InlineData(0, 2, true)]
+        [InlineData(1, 1, true)]
         [InlineData(1, 2, true)]
         [InlineData(3, 2, false)]
-        [InlineData(0, 3, true)]
         [InlineData(1, 3, true)]
         [InlineData(2, 3, true)]
-        [InlineData(3, 3, false)]
+        [InlineData(3, 3, true)]
 
         [Theory]
         public void InPercentShouldReturnCorrectBoolean(int count, int percent, bool expected)
@@ -82,10 +84,10 @@ namespace ApplicationTests
             var result = Utils.InPercentRange(count, percent);
             Assert.Equal(expected, result);
 
-            for(int i = 0; i < 100; i++)
+            for (int i = 1; i < 202; i++)
             {
                 result = Utils.InPercentRange(i, 1);
-                if (i == 0)
+                if (i == 1 || i == 101 || i == 201)
                 {
                     Assert.True(result);
                 }
@@ -95,13 +97,13 @@ namespace ApplicationTests
                 }
             }
 
-            for (int i = 0; i < 100000; i++)
+            for (int i = 1; i < 100000; i++)
             {
                 result = Utils.InPercentRange(i, 100);
                 Assert.True(result);
             }
 
-            for (int i = 0; i < 100000; i++)
+            for (int i = 1; i < 100000; i++)
             {
                 result = Utils.InPercentRange(i, 0);
                 Assert.False(result);

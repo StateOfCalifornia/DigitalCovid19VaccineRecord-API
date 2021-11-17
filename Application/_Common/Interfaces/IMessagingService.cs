@@ -9,7 +9,6 @@ namespace Application.Common.Interfaces
 {
     public interface IMessagingService
     {
-        void SendMessage(string toPhoneNumber, string text, CancellationToken cancellationToken);
-        Task<string> SendMessageAsync(string toPhoneNumber, string text, CancellationToken cancellationToken);
+        Task<string> SendMessageAsync(string toPhoneNumber, string text, string language, CancellationToken cancellationToken);
     }
 }

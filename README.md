@@ -1,4 +1,4 @@
-# What is Digital COVID-19 Vaccine Record (DCVR)?
+#What is Digital COVID-19 Vaccine Record (DCVR)?
 
 In June 2021, the California Department of Technology (CDT) launched the Digital COVID-19 Vaccine Record (DCVR) Portal, implementing the SMART Health Card framework. A Digital Vaccine Record is an electronic vaccination record drawn from the data stored in the California immunization registry. The digital record shows the same information as a resident's paper CDC vaccine card: name, date of birth, vaccination dates, and type of vaccine received. The digital record also includes a QR code that, when scanned by a SMART Health Card reader, will display to the reader your name, date of birth, vaccine dates, and vaccine type. The QR code also confirms the vaccine record as an official record of the state of California. 
 
@@ -109,9 +109,12 @@ The API, the middle tier between the UI and Backend to verify users’ vaccine c
   "AppSettings:SendNotFoundEmail": 1,
   "AppSettings:SendNotFoundSms": 1,
   "AppSettings:AppleWalletUrl": "https://redirect.health.apple.com/SMARTHealthCard/",
-  "AppSettings:GoogleWalletUrl": "https://pay.google.com/gp/v/save/",
+  "AppSettings:GoogleWalletUrl": "intent://pay.google.com/gp/v/save/<jwt>#Intent;scheme=https;package=com.google.android.gms;S.browser_fallback_url=https%3A%2f%2Fsupport.google.com%2fpay%3Fp%3Dcant_add_covid_card;end",
   "AppSettings:UseBatchMode": "0",
-
+  "AppSettings:UseCDPHMessagingService": "0",
+  "CDPHMessageSettings:SMSApi": "https://Localhost",
+  "CDPHMessageSettings:SMSKey": "123456",
+  "CDPHMessageSettings:SandBox": "0",
   "MessageQueueSettings:ConnectionString": "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=fake;EndpointSuffix=core.windows.net",
   "MessageQueueSettings:QueueName": "yourqueue",
   "MessageQueueSettings:MaxDequeuePerMinute": 800,
@@ -261,7 +264,7 @@ return vaccineCredential;
 |AppSettings__GoogleWalletUrl|The Google URL that is used to add a user's vaccine credential info to Google Pay application|https://pay.google.com/gp/v/save/|
 |AppSettings__AppleWalletUrl|The Apple Wallet's URL that is used to add a user's vaccine credential info to Apple Wallet application|https://redirect.health.apple.com/SMARTHealthCard/|
 |AppSettings__LinkExpireHours|Number of hours the QR link is valid|24|
-|AppSettings__QrCodeApi|Url of function app for QR code generator|https://[Your Function App url]/api/QRCreate|
+|AppSettings__QrCodeApi|Url of function app for QR code generator or you may leave empty to use the .NET QR code generator |https://[Your Function App url]/api/QRCreate|
 |AppSettings:RedisConnectionString |Redis Cache Connection String|
 |AppSettings__MaxQrSeconds|Used for rate limiting the Vaccine Credential endpoint. The value is used in conjunction with MaxQRTries|60|
 |AppSettings__MaxQrTries|Used for rate limiting. It contains a number of times a client can call the Vaccine Credential endpoint within a given MaxQrSeconds. Note use -1 for no ratelimiting.|3|
@@ -273,6 +276,10 @@ return vaccineCredential;
 |AppSettings__VaccineFAQUrl|Url for FAQ Page|https://website.gov/faq|
 |AppSettings__VirtualAssistantUrl|url for virtual assistant|https://virtaulassistant.gov/?id=17|
 |AppSettings__WebUrl|Url of the Vaccine Credential front end application|http://mainsite.gov|
+|AppSettings__UseCDPHMessagingService|Indicates the percentage of SMS messages to be sent using the alternate messaging service|"0": will not send to alternate, "0-100": % range 0-100 |
+|CDPHMessageSettings__SMSApi|Endpoint URL for CDPH Message service |"https://Localhost"|
+|CDPHMessageSettings__SMSKey|SMS Api Key secret |"123456"|
+|CDPHMessageSettings__SandBox|Flag used to indicate messaging service on or off |"0": off, "1": on|
 |MessageQueueSettings__ConnectionString|URL to the Credential Request queue|DefaultEndpointsProtocol=https;AccountName=[ACCOUNT NAME];AccountKey=[ACCOUNT KEY];EndpointSuffix=core.windows.net|
 |MessageQueueSettings__MaxDequeuePerMinute|Number of items in the Credential Request queue that should be processed per minute|1000|
 |MessageQueueSettings__MessageExpireHours|Number of hours that an un-processable item should be removed from the Credential Request queue|72|
@@ -286,11 +293,12 @@ return vaccineCredential;
 |KeySettings__GoogleCertificate|It is the public key pair of the private key used to sign the Google Health Card||
 |KeySettings__GoogleIssuer|The Google service account's issuer that is created under CDT Organization. It is linked to the GoogleIssuerId||
 |KeySettings__GoogleIssuerId|The Google Merchant Center account that is used to add the generate Vaccine Credential to the Google Pay application|3388000000013279970|
-|KeySettings__GooglePrivateKey|The Google service account's private key (RS256) used in signing the Vaccine Credential for Google Health Card|MIIEo..................Uh+jDJj7GxFMqUk=|
+|KeySettings__GooglePrivateKey|The Google service account's private key (RS256) used in signing the Vaccine Credential for Google Health Card. The RSA must be extracted from the Google Key using a tool such as openssl. ```openssl rsa -in googleprivate.key -out googleprivatersa.key```. Use only the value between the BEGIN/END in your configuration value.|MIIEo..................Uh+jDJj7GxFMqUk=|
 |KeySettings__GoogleWalletLogo|The link to the California Logo that is used in the Google Health Card|https://[Your web url]/imgs/ca-logo-660w.png|
 |SendGridSettings__Key|The SendGrid API Key to send emails|SG.Az12........RHcJaS4|
 |SendGridSettings__Sender|The email sender friendly name|[State] Department of Public Health|
 |SendGridSettings__SenderEmail|The sender email|no-reply@[Department].[State].gov|
+|SendGridSettings__SandBox|Flag used to indicate messaging service on or off |"0": off, "1": on|
 |SnowFlakeSettings__ConnectionString|The Snowflake connection string|ACCOUNT=[account url];WAREHOUSE=[Warehouse];ROLE=[role];USER=[YOUR_USER];PASSWORD=[YOUR_PASSWORD];DB=[Database];SCHEMA=[Schema]|
 |SnowFlakeSettings__IdQuery|The query string to retrieve Vaccine Credential by a RECIP_ID|select * from table_x where id= ?|
 |SnowFlakeSettings__StatusEmailQuery|The query string to call Snowflake function to search by email|select check_credentials_by_email_2(?, ?, ?, ?)|
@@ -301,7 +309,35 @@ return vaccineCredential;
 |TwilioSettings__AccountSID|Twilio Account id|AC.......55f|
 |TwilioSettings__AuthToken|Twilio Authorized Token|d3a.....cba|
 |TwilioSettings__FromPhone|Twilio's sender phone number|+183......29|
+|TwilioSettings__SandBox|Flag used to indicate messaging service on or off |"0": off, "1": on|
 |WEBJOBS_RESTART_TIME|The time in seconds to restart the Vaccine Credential web job if it is not running|3|
 
+
+
+ # Unit Test Configuration For InfrastructureTests
+
+ The secrets.json should be the following:
+```
+{
+    "secrets": {
+        "AppSettings:QRCodeApi": "https://yourapi[OPTIONAL]",
+        "AppSettings:CodeSecret": "01..16",
+        "KeySettings:Certificate": "-----BEGIN CERTIFICATE-----\nMIICiT....dg4s4wSNiBE=\n-----END CERTIFICATE-----\n",
+        "KeySettings:PrivateKey": "-----BEGIN EC PRIVATE KEY-----\nMHcC...Nm50qBQ==\n-----END EC PRIVATE KEY-----\n",
+        "KeySettings:GooglePrivateKey": "MIIE......xFMqUk=",
+        "KeySettings:GoogleCertificate": "-----BEGIN CERTIFICATE-----\nMIIDWjC...b4kKtpHFQ==\n-----END CERTIFICATE-----\n",
+        "Hex:PrivateKey": "0102..32",
+        "Hex:PublicKey": "0102..65"     
+    }
+}
+```
+
+Hex:PrivateKey and Hex:PublicKey can be obtained using ```openssl.exe ec -in c:\temp\ec_private.cer -text```.
+
+"c:\temp\ec_privatekey.cer" is you elliptical curve private key file.
+
+The output value of the "pub:" and "priv:" values (stripped of colons) should be used for the Hex:PrivateKey and Hex:PublicKey values.
+
+For KeySettings:GooglePrivateKey, please refer to configuration of KeySettings__GooglePrivateKey above in the "API Configuration Parameters" to get proper value. 
 
 

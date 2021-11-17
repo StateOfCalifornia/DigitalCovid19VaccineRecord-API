@@ -27,15 +27,21 @@ namespace InfrastructureTests
             var exceptions = new List<Exception>();
 
             for (var attempted = 0; attempted < maxAttemptCount; attempted++)
+            {
                 try
                 {
-                    if (attempted > 0) Thread.Sleep(retryInterval);
+                    if (attempted > 0)
+                    {
+                        Thread.Sleep(retryInterval);
+                    }
+
                     return action();
                 }
                 catch (Exception ex)
                 {
                     exceptions.Add(ex);
                 }
+            }
 
             throw new AggregateException(exceptions);
         }
