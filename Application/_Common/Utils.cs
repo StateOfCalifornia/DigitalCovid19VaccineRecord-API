@@ -344,7 +344,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>Correo electrónico oficial del Departamento de Estado de California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "cn" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "zh" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>数字新冠肺炎疫苗接种记录</h3>" +
                             $"<p>感谢访问加利福尼亚州数字新冠肺炎疫苗接种记录门户网站。检索您的数字疫苗接种记录的链接在 {linkExpireHours} 小时内有效。访问并保存到设备后，二维码将不会过期。</p>" +
                             $"<p><a href='{url}'>查看疫苗接种记录</a></p>" +
@@ -356,7 +356,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>加州事务部官方电子邮件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "tw" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "zh-TW" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>數位 COVID-19 疫苗接種記錄</h3>" +
                             $"<p>感謝您造訪加州的數位 COVID-19 疫苗接種記錄入口網站。用來擷取疫苗接種數位記錄之連結的有效期間為 {linkExpireHours} 小時。存取並儲存到裝置後，QR 代碼就不會過期。</p>" +
                             $"<p><a href='{url}'>檢視疫苗接種數位記錄</a></p>" +
@@ -368,7 +368,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>官方加州部門電子郵件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "kr" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "ko" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>디지털 코로나19 백신 기록</h3>" +
                             $"<p>캘리포니아주의 디지털 코로나19 백신 기록 포털에 방문해 주셔서 감사합니다. 디지털 백신 기록을 되찾을 수 있는 링크는 {linkExpireHours}시간 동안 유효합니다. 액세스하여 기기에 저장한 QR 코드는 만료되지 않습니다.</p>" +
                             $"<p><a href='{url}'>디지털 백신 기록 보기</a></p>" +
@@ -392,7 +392,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>Email chính thức của Tiểu bang California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "ae" => $"<img dir='rtl' src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "ar" => $"<img dir='rtl' src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 dir='rtl' style='color: #f06724'>السجل الرقمي للقاح فيروس كورونا (كوفيد-19)</h3>" +
                             $"<p dir='rtl'>نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. إن الرابط الخاص باسترداد سجل اللقاح الرقمي الخاص بك صالح لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة.</p>" +
                             $"<p dir='rtl'><a href='{url}'>عرض سجل اللقاح الرقمي</a></p>" +
@@ -404,7 +404,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p dir='rtl' style='text-align:center'>البريد الإلكتروني الرسمي لوزارة الخارجية الخاص بولاية كاليفورنيا</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "ph" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "tl" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital na Rekord ng Bakuna para sa COVID-19</h3>" +
                             $"<p>Salamat sa pagbisita sa portal ng Digital na Rekord ng Pagpapabakuna laban sa COVID-19 ng Estado ng California. {linkExpireHours} na oras lang may bisa ang link para kunin ang iyong digital na rekord ng pagpapabakuna. Kapag na-access na at na-save sa iyong device, hindi mag-e-expire ang QR code.</p>" +
                             $"<p><a href='{url}'>Tingnan ang digital na rekord ng pagpapabakuna</a></p>" +
