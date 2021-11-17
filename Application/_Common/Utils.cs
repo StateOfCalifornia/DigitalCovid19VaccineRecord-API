@@ -306,24 +306,24 @@ namespace Application.Common
         }
         /*
          es: Spanish
-         cn: Chinese Simplified
-         tw: Chinese Traditional
-         kr: Korean
+         zh: Chinese Simplified
+         zh-TW: Chinese Traditional
+         ko: Korean
          vi: Vietnamese
-         ae: Arabic
-         ph: Tagalog
+         ar: Arabic
+         tl: Tagalog
          */
         public static string FormatSms(int linkExpireHours, string url, string lang)
         {
             return lang switch
             {
                 "es" => $"Gracias por visitar el portal del Registro digital de vacunación contra el COVID-19 del estado de California. El enlace para recuperar su código de registro digital de vacunación tiene una validez de {linkExpireHours} horas. Una vez accedido y guardado en su dispositivo, el código QR no expirará.\nVer el registro de vacunación:\n{url}",
-                "cn" => $"感谢访问加利福尼亚州数字新冠肺炎疫苗接种记录门户网站。检索您的数字疫苗接种记录的链接在 {linkExpireHours} 小时内有效。访问并保存到设备后，二维码将不会过期。\n查看疫苗接种记录：\n{url}",
-                "tw" => $"感謝您造訪加州的數位 COVID-19 疫苗接種記錄入口網站。用來擷取疫苗接種數位記錄之連結的有效期間為 {linkExpireHours} 小時。存取並儲存到裝置後，QR 代碼就不會過期。\n檢視疫苗接種記錄：\n{url}",
-                "kr" => $"캘리포니아주의 디지털 코로나19 백신 기록 포털에 방문해 주셔서 감사합니다. 디지털 백신 기록을 되찾을 수 있는 링크는 {linkExpireHours}시간 동안 유효합니다. 액세스하여 기기에 저장한 QR 코드는 만료되지 않습니다.\n백신 기록 보기:\n{url}",
+                "zh" => $"感谢访问加利福尼亚州数字新冠肺炎疫苗接种记录门户网站。检索您的数字疫苗接种记录的链接在 {linkExpireHours} 小时内有效。访问并保存到设备后，二维码将不会过期。\n查看疫苗接种记录：\n{url}",
+                "zh-TW" => $"感謝您造訪加州的數位 COVID-19 疫苗接種記錄入口網站。用來擷取疫苗接種數位記錄之連結的有效期間為 {linkExpireHours} 小時。存取並儲存到裝置後，QR 代碼就不會過期。\n檢視疫苗接種記錄：\n{url}",
+                "ko" => $"캘리포니아주의 디지털 코로나19 백신 기록 포털에 방문해 주셔서 감사합니다. 디지털 백신 기록을 되찾을 수 있는 링크는 {linkExpireHours}시간 동안 유효합니다. 액세스하여 기기에 저장한 QR 코드는 만료되지 않습니다.\n백신 기록 보기:\n{url}",
                 "vi" => $"Cảm ơn quý vị đã truy cập vào cổng thông tin Hồ sơ Vắc xin COVID-19 Kỹ thuật số của Tiểu bang California. Đường liên kết để truy xuất mã hồ sơ vắc xin kỹ thuật số của quý vị chỉ có hiệu lực trong {linkExpireHours} giờ. Sau khi truy cập và lưu vào thiết bị, mã QR của quý vị sẽ không hết hạn.\nXem Hồ sơ Vắc xin:\n{url}",
-                "ae" => $"نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. إن الرابط الخاص باسترداد سجل اللقاح الرقمي الخاص بك صالح لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة.\nعرض سجل اللقاح:\n{url}",
-                "ph" => $"Salamat sa pagbisita sa portal ng Digital na Rekord ng Pagpapabakuna laban sa COVID-19 ng Estado ng California. {linkExpireHours} na oras lang may bisa ang link para kunin ang iyong digital na rekord ng pagpapabakuna. Kapag na-access na at na-save sa iyong device, hindi mag-e-expire ang QR code.\nTingnan ang Rekord ng Bakuna:\n{url}",
+                "ar" => $"نشكرك على زيارة البوابة الإلكترونية للسجل الرقمي للقاح فيروس كورونا (كوفيد-19) بولاية كاليفورنيا. إن الرابط الخاص باسترداد سجل اللقاح الرقمي الخاص بك صالح لمدة {linkExpireHours} ساعة. بمجرد الوصول إليه وحفظه على جهازك، لن تنتهي صلاحية رمز الاستجابة السريعة.\nعرض سجل اللقاح:\n{url}",
+                "tl" => $"Salamat sa pagbisita sa portal ng Digital na Rekord ng Pagpapabakuna laban sa COVID-19 ng Estado ng California. {linkExpireHours} na oras lang may bisa ang link para kunin ang iyong digital na rekord ng pagpapabakuna. Kapag na-access na at na-save sa iyong device, hindi mag-e-expire ang QR code.\nTingnan ang Rekord ng Bakuna:\n{url}",
                 _ => $"Thank you for visiting the State of California's Digital COVID-19 Vaccine Record portal. The link to retrieve your digital vaccine record is valid for {linkExpireHours} hours. Once accessed and saved to your device, the QR code will not expire.\nView Vaccine Record:\n{url}",
             };
         }
