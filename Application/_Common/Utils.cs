@@ -460,7 +460,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>Correo electrónico oficial del Departamento de Estado de California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "cn" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "zh" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>数字新冠肺炎疫苗接种记录</h3>" +
                             $"<p>您最近从 <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a> 请求了数字新冠肺炎疫苗接种记录。很遗憾，您提供的信息与系统中的信息不符。您可以使用不同的手机号码或电子邮件地址<a href='{_appSettings.WebUrl}'>提交另一个请求</a>，或者您可以联系 <a href='{_appSettings.VirtualAssistantUrl}'>CDPH 新冠肺炎虚拟助手</a>以帮助将您的记录与您的联系信息进行匹配。</p><br/>" +
                             $"<p><b>有问题吗？</b></p>" +
@@ -470,7 +470,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>加州事务部官方电子邮件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "tw" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "zh-TW" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>數位 COVID-19 疫苗接種記錄</h3>" +
                             $"<p>您最近從 <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a> 申請了 COVID-19 疫苗接種數位記錄很遺憾，您提供的資訊與我們系統的資訊不相符。您可以使用不同的手機號碼或電子郵件地址<a href='{_appSettings.WebUrl}'>提交另一次申請</a>，或者可以聯絡 <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 虛擬助理</a>協助比對您的記錄與聯絡資訊。</p><br/>" +
                             $"<p><b>有問題嗎？</b></p>" +
@@ -480,7 +480,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>官方加州部門電子郵件</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "kr" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "ko" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>디지털 코로나19 백신 기록</h3>" +
                             $"<p>최근에 <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>에서 디지털 코로나19 백신 기록을 신청하셨습니다.  안타깝게도 귀하가 제공한 정보는 저희 시스템의 정보와 일치하지 않습니다. 다른 모바일 전화번호나 이메일 주소로 <a href='{_appSettings.WebUrl}'>신청서를 새로 제출</a>하거나 <a href='{_appSettings.VirtualAssistantUrl}'>CDPH 코로나19 가상 도우미</a>에 문의하여 귀하의 기록이 연락처 정보와 연결되도록 도움을 받을 수 있습니다.</p><br/>" +
                             $"<p><b>질문이 있습니까?</b></p>" +
@@ -500,7 +500,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p style='text-align:center'>Email chính thức của Tiểu bang California</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "ae" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png' dir='rtl'><br/>" +
+                "ar" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png' dir='rtl'><br/>" +
                             $"<h3 dir='rtl' style='color: #f06724'>السجل الرقمي للقاح فيروس كورونا (كوفيد-19)</h3>" +
                             $"<p dir='rtl'>قد طلبت مؤخرًا سجل رقمي للقاح كوفيد-19 من <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. وللأسف، لا تتطابق المعلومات التي قدمتها مع المعلومات الموجودة في نظامنا. يمكنك <a href='{_appSettings.WebUrl}'>إرسال طلب آخر</a> باستخدام رقم هاتف أو عنوان بريد إلكتروني مختلف، أو يمكنك الاتصال <a href='{_appSettings.VirtualAssistantUrl}'>بالمساعد الافتراضي الخاص بكوفيد-19 التابع لإدارة كاليفورنيا للصحة العامة (CDPH)</a> للمساعدة في مطابقة السجل الخاص بك مع معلومات الاتصال الخاصة بك.</p>" +
                             $"<p dir='rtl'><b>هل لديك أي أسئلة؟</b></p>" +
@@ -510,7 +510,7 @@ namespace Application.Common
                             $"<hr>" +
                             $"<footer><p dir='rtl' style='text-align:center'>البريد الإلكتروني الرسمي لوزارة الخارجية الخاص بولاية كاليفورنيا</p>" +
                             $"<p style='text-align:center'><img src='{_appSettings.EmailLogoUrl}'></p></footer>",
-                "ph" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
+                "tl" => $"<img src='{_appSettings.WebUrl}/imgs/MyTurn-logo.png'><br/>" +
                             $"<h3 style='color: #f06724'>Digital na Rekord ng Bakuna para sa COVID-19</h3>" +
                             $"<p>Kamakailan kang humiling ng Digital na Rekord ng Pagpapabakuna laban sa COVID-19 mula sa <a href='{_appSettings.WebUrl}'>MyVaccineRecord.CDPH.ca.gov</a>. Sa kasawiang-palad, hindi tumutugma sa impormasyon sa aming system ang impormasyong ibinigay mo. Puwede kang <a href='{_appSettings.WebUrl}'>magsumite ng isa pang kahilingan</a> gamit ang ibang numero ng mobile phone o email address, o puwede kang makipag-ugnayan sa <a href='{_appSettings.VirtualAssistantUrl}'>CDPH COVID-19 Virtual Assistant</a> para sa tulong sa pagtutugma ng iyong rekord sa iyong impormasyon sa pakikipag-ugnayan.</p><br/>" +
                             $"<p><b>May mga tanong?</b></p>" +
