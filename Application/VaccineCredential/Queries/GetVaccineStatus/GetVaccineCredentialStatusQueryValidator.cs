@@ -58,8 +58,7 @@ namespace Application.VaccineCredential.Queries.GetVaccineStatus
             RuleFor(c => c.Language)
                 .NotEmpty()
                 .MinimumLength(2)
-                .MaximumLength(2);
-
+                .MaximumLength(5);
         }
     }
 }
