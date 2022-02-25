@@ -11,5 +11,6 @@ namespace Application.Common.Interfaces
         Task<Vc> GetVaccineCredentialSubjectAsync(string id, CancellationToken cancellationToken);
         Task<string> GetVaccineCredentialStatusAsync(GetVaccineCredentialStatusQuery request, CancellationToken cancellationToken);
         Task<string> GetVaccineCredentialStatusAsync(SnowflakeDbConnection conn, GetVaccineCredentialStatusQuery request, CancellationToken cancellationToken);
+        string GetSnowFlakeConnectionString();
     }
 }

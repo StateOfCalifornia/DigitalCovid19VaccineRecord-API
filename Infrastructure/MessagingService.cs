@@ -123,7 +123,7 @@ namespace Infrastructure
 
                 if (sendResponse.IsSuccessStatusCode || sendResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    deliveryStatus = smsResponse.SmsResponseDetail.DeliveryStatus.ToUpper();
+                    deliveryStatus = smsResponse?.SmsResponseDetail.DeliveryStatus.ToUpper();
                 }
 
                 switch (deliveryStatus)

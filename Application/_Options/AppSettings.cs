@@ -16,6 +16,7 @@ namespace Application.Options
         public string QrCodeApi { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string CodeSecret { get; set; }
+        public string CodeSecretOld { get; set; }
         [Required(AllowEmptyStrings = true)]
         public string DeveloperSms { get; set; }
         [Required(AllowEmptyStrings = true)]
@@ -58,9 +59,10 @@ namespace Application.Options
         public string VaccineFAQUrl { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string CDCUrl { get; set; }
-
         [Required(AllowEmptyStrings = false)]
         public string UseCDPHMessagingService { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string UsePinpointEmailService { get; set; }
 
         #region IOptionsValidatable Implementation
         public void Validate() => Validator.ValidateObject(this, new ValidationContext(this), validateAllProperties: true);

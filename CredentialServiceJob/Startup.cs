@@ -50,6 +50,7 @@ namespace CredentialServiceJob
                  .Configure<MessageQueueSettings>(o => Configuration.GetSection("MessageQueueSettings").Bind(o))
                  .Configure<KeySettings>(o => Configuration.GetSection("KeySettings").Bind(o))
                  .Configure<CdphMessageSettings>(o => Configuration.GetSection("CDPHMessageSettings").Bind(o))
+                 .Configure<PinpointEmailSettings>(o => Configuration.GetSection("PinpointEmailSettings").Bind(o))
                  .AddOptions()
                  .AddLogging(configure => configure.AddApplicationInsightsWebJobs(c => c.InstrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY"))
                 .AddConsole(configure =>
@@ -65,6 +66,7 @@ namespace CredentialServiceJob
                  .AddSingleton(r => r.GetRequiredService<IOptions<MessageQueueSettings>>().Value)
                  .AddSingleton(r => r.GetRequiredService<IOptions<KeySettings>>().Value)
                  .AddSingleton(r => r.GetRequiredService<IOptions<CdphMessageSettings>>().Value)
+                 .AddSingleton(r => r.GetRequiredService<IOptions<PinpointEmailSettings>>().Value)
 
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<SendGridSettings>>().Value)
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<SnowFlakeSettings>>().Value)
@@ -73,6 +75,7 @@ namespace CredentialServiceJob
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<MessageQueueSettings>>().Value)
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<KeySettings>>().Value)
                  .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<CdphMessageSettings>>().Value)
+                 .AddSingleton<ISettingsValidate>(r => r.GetRequiredService<IOptions<PinpointEmailSettings>>().Value)
 
                  .AddSingleton<IEmailService, EmailService>()
                  .AddSingleton<IBase64UrlUtility, Base64UrlUtility>()
@@ -85,6 +88,7 @@ namespace CredentialServiceJob
 
             AddSendGridClient(services);
             AddCdphSmsMessagingClient(services);
+            AddPinpointEmailClient(services);
             return services;
         }
 
@@ -96,6 +100,18 @@ namespace CredentialServiceJob
             var client = new SendGridClient(options.Key);
 
             services.AddTransient(x => client);
+        }
+
+        private static void AddPinpointEmailClient(IServiceCollection services)
+        {
+            //Register the CdphMessaging Client and add necessary headers
+            services.AddHttpClient<PinpointEmailClient>(client =>
+            {
+                var options = services.BuildServiceProvider().GetService<PinpointEmailSettings>();
+                client.BaseAddress = new Uri(options.EmailApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("x-api-key", options.EmailKey);
+            });
         }
 
         private static void AddCdphSmsMessagingClient(IServiceCollection services)

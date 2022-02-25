@@ -71,8 +71,26 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
             
             try
             {
-                var decrypted = _aesEncryptionService.DecryptGcm(request.Id, _appSettings.CodeSecret);
-                
+                var decrypted = "";
+                try
+                {
+                    decrypted = _aesEncryptionService.DecryptGcm(request.Id, _appSettings.CodeSecret);
+                }
+                catch (Exception)
+                {
+                    //If there is a CodeSecretOld configured and the current codesecret failed, try with the old.
+                    //There should only be CodeSecretOld set on rotating keys, where
+                    //the CodeSecretOld is the old key value. After 24 hours the CodeSecretOld setting should be removed from the configuration.
+                    if (!string.IsNullOrWhiteSpace(_appSettings.CodeSecretOld))
+                    {
+                        decrypted = _aesEncryptionService.DecryptGcm(request.Id, _appSettings.CodeSecretOld);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
                 var dateBack = Convert.ToInt64(decrypted.Split("~")[0]);
                 pin = decrypted.Split("~")[1];
                 id = decrypted.Split("~")[2];
@@ -122,7 +140,7 @@ namespace Application.VaccineCredential.Queries.GetVaccineCredential
 
                     var doses = new List<Dose>();
                     for (int ix = 1; ix < cred.Vc.CredentialSubject.FhirBundle.Entry.Count; ix++)
-                        {
+                    {
                         var d = cred.Vc.CredentialSubject.FhirBundle.Entry[ix];
                         var doa = "";
                         if (DateTime.TryParse(d.Resource.OccurrenceDateTime, out var d2))
