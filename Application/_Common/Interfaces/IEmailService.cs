@@ -1,14 +1,13 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using SendGrid.Helpers.Mail;
+using Application.Common.Models;
+using System.Threading;
 
 namespace Application.Common.Interfaces
 {
     public interface IEmailService
     {
-        void SendEmail(SendGridMessage message, string recipient);
-
-        Task<bool> SendEmailAsync(SendGridMessage message, string recipient);
-
+        Task<string> SendEmailAsync(EmailRequest message, CancellationToken cancellationToken);
     }
 }

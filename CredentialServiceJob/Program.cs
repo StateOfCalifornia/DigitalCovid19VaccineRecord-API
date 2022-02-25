@@ -117,7 +117,7 @@ namespace CredentialServiceJob
                             timer.Start();
                         }
                         var conn = new SnowflakeDbConnection();
-                        conn.ConnectionString = _snowFlakeSettings.ConnectionString;
+                        conn.ConnectionString = _snowFlakeService.GetSnowFlakeConnectionString();
                         conn.Open();
                         var connThreadCount = new ConnectionThreadCount()
                         {
