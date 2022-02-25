@@ -29,6 +29,7 @@ namespace Infrastructure
             services.Configure<MessageQueueSettings>(o => configuration.GetSection("MessageQueueSettings").Bind(o));
             services.Configure<AppSettings>(o => configuration.GetSection("AppSettings").Bind(o));
             services.Configure<CdphMessageSettings>(o => configuration.GetSection("CdphMessageSettings").Bind(o));
+            services.Configure<PinpointEmailSettings>(o => configuration.GetSection("PinpointEmailSettings").Bind(o));
 
             // Explicitly register the Infrastructure configuration setting objects by delegating to the IOptions object
             // This will allow us to DI the settings directly, without IOptions
@@ -39,6 +40,7 @@ namespace Infrastructure
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<MessageQueueSettings>>().Value);
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<AppSettings>>().Value);
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<CdphMessageSettings>>().Value);
+            services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<PinpointEmailSettings>>().Value);
 
             // Register IOptionsValidatables in order to validate all settings
             services.AddSingleton<ISettingsValidate>(resolver => resolver.GetRequiredService<IOptions<SnowFlakeSettings>>().Value);
@@ -48,12 +50,14 @@ namespace Infrastructure
             services.AddSingleton<ISettingsValidate>(resolver => resolver.GetRequiredService<IOptions<MessageQueueSettings>>().Value);
             services.AddSingleton<ISettingsValidate>(resolver => resolver.GetRequiredService<IOptions<AppSettings>>().Value);
             services.AddSingleton<ISettingsValidate>(resolver => resolver.GetRequiredService<IOptions<CdphMessageSettings>>().Value);
+            services.AddSingleton<ISettingsValidate>(resolver => resolver.GetRequiredService<IOptions<PinpointEmailSettings>>().Value);
 
 
             AddSendGridClient(services);
             AddQueryClient(services);
             AddQrApiService(services);
             AddCdphSmsMessagingClient(services);
+            AddPinpointEmailClient(services);
 
             // Register service objects
             services.AddTransient<ISnowFlakeService, SnowFlakeService>();
@@ -82,6 +86,17 @@ namespace Infrastructure
                 client.BaseAddress = new Uri(options.SmsApi);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add("x-api-key", options.SmsKey);              
+            });
+        }
+
+        private static void AddPinpointEmailClient(IServiceCollection services)
+        {
+            services.AddHttpClient<PinpointEmailClient>(client =>
+            {
+                var options = services.BuildServiceProvider().GetService<PinpointEmailSettings>();
+                client.BaseAddress = new Uri(options.EmailApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("x-api-key", options.EmailKey);
             });
         }
 

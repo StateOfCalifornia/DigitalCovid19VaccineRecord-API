@@ -10,13 +10,12 @@ California's implementation of the application is a three-tier, logically and ph
 3.	A backend data tier using Snowflake. 
 
 # Twilio SMS and SendGrid API 
-- Once the API determines that information submitted matches an existing record in the immunization registry, a 'found' message is sent via Twilio (SMS) or SendGrid (email). 
-- If a match is not found, a failure message is sent via Twilio (SMS) or SendGrid (email).
+- Once the API determines that information submitted matches an existing record in the immunization registry, a 'found' message can be sent via Twilio (SMS) or SendGrid (email). 
+- If a match is not found, a failure message can be sent via Twilio (SMS) or SendGrid (email). 
 
-> **Note:** When sending more than 1000 SMS per day, Twilio recommends obtaining a [verified toll-free number](https://support.twilio.com/hc/en-us/articles/360038172934-Information-and-best-practices-for-using-Toll-Free-SMS-and-MMS-in-the-US-and-Canada#h_01F4T72QT23VCZ43PZPX1CRT5G) to reduce the liklihood of carrier spam filtering. This process can take 5-7 business days.
+**Note:** When sending more than 1000 SMS per day, Twilio recommends obtaining a [verified toll-free number](https://support.twilio.com/hc/en-us/articles/360038172934-Information-and-best-practices-for-using-Toll-Free-SMS-and-MMS-in-the-US-and-Canada#h_01F4T72QT23VCZ43PZPX1CRT5G) to reduce the liklihood of carrier spam filtering. This process can take 5-7 business days.
 
-> **Note:** Be sure to follow [SendGrid's best practices](https://sendgrid.com/blog/8-best-practices-to-improve-your-email-deliverability/) for achieving good email delivery rates. Following a [30-day email IP warmup schedule](https://sendgrid.com/resource/email-guide-ip-warm-up/) is recommended.
-
+**Note:** Be sure to follow [SendGrid's best practices](https://sendgrid.com/blog/8-best-practices-to-improve-your-email-deliverability/) for achieving good email delivery rates. Following a [30-day email IP warmup schedule](https://sendgrid.com/resource/email-guide-ip-warm-up/) is recommended.
 
 # Code Repos
 There are a total of three code repositories:
@@ -83,6 +82,12 @@ The API, the middle tier between the UI and Backend to verify users’ vaccine c
   "SnowFlakeSettings:RelaxedPhoneQuery": "",
   "SnowFlakeSettings:StatusEmailQuery": "",
   "SnowFlakeSettings:StatusPhoneQuery": "",
+  "SnowFlakeSettings:ClientId":"",
+  "SnowFlakeSettings:ClientSecret":"",
+  "SnowFlakeSettings:ClientPassword":"",
+  "SnowFlakeSettings:UserName":"",
+  "SnowFlakeSettings:MicrosoftOAuthUrl":"",
+  "SnowFlakeSettings:Scope":"",
 
   "SendGridSettings:SenderEmail": "no-reply@email.com",
   "SendGridSettings:Sender": "Vaccine Credential",
@@ -98,9 +103,11 @@ The API, the middle tier between the UI and Backend to verify users’ vaccine c
   "AppSettings:DeveloperSms": "",
   "AppSettings:DeveloperEmail": "",
   "AppSettings:CodeSecret": "Your code secret must be HEX Code 32 characters",
+  "AppSettings:CodeSecretOld": "Your code secret must be HEX Code 32 characters (Only needed when Rotating Key)",
   "AppSettings:LinkExpireHours": 2,
   "AppSettings:CacheMinutes": 1,
   "AppSettings:UseMessageQueue": 0,
+  "AppSettings:UsePinpointEmailService": 0,
   "AppSettings:MaxStatusTries": -1,
   "AppSettings:MaxStatusSeconds": 60,
   "AppSettings:MaxQrTries": -1,
@@ -115,6 +122,9 @@ The API, the middle tier between the UI and Backend to verify users’ vaccine c
   "CDPHMessageSettings:SMSApi": "https://Localhost",
   "CDPHMessageSettings:SMSKey": "123456",
   "CDPHMessageSettings:SandBox": "0",
+  "PinpointEmailSettings:EmailApi": "Your AWS pinpoint email api endpoint here",
+  "PinpointEmailSettings:EmailKey": "Your email api key here",
+  "PinpointEmailSettings:SandBox": "0",
   "MessageQueueSettings:ConnectionString": "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=fake;EndpointSuffix=core.windows.net",
   "MessageQueueSettings:QueueName": "yourqueue",
   "MessageQueueSettings:MaxDequeuePerMinute": 800,
@@ -257,6 +267,7 @@ return vaccineCredential;
 |--|--|--|
 |AppSettings__CDCUrl|Url to CDC for covid19|https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/prevention.html|
 |AppSettings__CodeSecret|Used to encrypt the URL to retrieve QR Code. It is AES Secret(32 hex characters long) |D93CF.....290|
+|AppSettings__CodeSecretOld|Used for rotating the CodeSecret. (note only needed for 24 hours during rotation)|X4SU.....001|
 |AppSettings__CovidWebUrl|Url for covid19 pate|https://covid19.yourstate.gov|
 |AppSettings__DeveloperEmail|If set, all email messages will be sent to this email instead of using the email address entered by users. This flag should only be used in local development environment. It should be blank when the system deployed in Azure||
 |AppSettings__DeveloperSms|If set, all SMS messages will be sent to this phone number instead of using the phone number entered by users. This flag should only be used in local development environment. It should be blank when the system deployed in Azure||
@@ -277,6 +288,7 @@ return vaccineCredential;
 |AppSettings__VirtualAssistantUrl|url for virtual assistant|https://virtaulassistant.gov/?id=17|
 |AppSettings__WebUrl|Url of the Vaccine Credential front end application|http://mainsite.gov|
 |AppSettings__UseCDPHMessagingService|Indicates the percentage of SMS messages to be sent using the alternate messaging service|"0": will not send to alternate, "0-100": % range 0-100 |
+|AppSettings__UsePinpointEmailService|Indicates the percentage of Email messages to be sent using the alternate messaging service|range 0-100|
 |CDPHMessageSettings__SMSApi|Endpoint URL for CDPH Message service |"https://Localhost"|
 |CDPHMessageSettings__SMSKey|SMS Api Key secret |"123456"|
 |CDPHMessageSettings__SandBox|Flag used to indicate messaging service on or off |"0": off, "1": on|
@@ -299,13 +311,23 @@ return vaccineCredential;
 |SendGridSettings__Sender|The email sender friendly name|[State] Department of Public Health|
 |SendGridSettings__SenderEmail|The sender email|no-reply@[Department].[State].gov|
 |SendGridSettings__SandBox|Flag used to indicate messaging service on or off |"0": off, "1": on|
-|SnowFlakeSettings__ConnectionString|The Snowflake connection string|ACCOUNT=[account url];WAREHOUSE=[Warehouse];ROLE=[role];USER=[YOUR_USER];PASSWORD=[YOUR_PASSWORD];DB=[Database];SCHEMA=[Schema]|
+|PinpointEmailSettings__EmailApi|End point to the AWS pinpoint messaging service|https://[your url]|
+|PinpointEmailSettings__EmailKey|The AWS Pinpoint Email service API Key|IbsSKANF...78|
+|PinpointEmailSettings__SandBox|Flag used to indicate messaging service on or off |"0": off, "1": on|
+|SnowFlakeSettings__ConnectionString|The Snowflake connection string for local account|ACCOUNT=[account url];WAREHOUSE=[Warehouse];ROLE=[role];USER=[YOUR_USER];PASSWORD=[YOUR_PASSWORD];DB=[Database];SCHEMA=[Schema]|
+|SnowFlakeSettings__ConnectionString|The Snowflake connection string if use OAuth|TOKEN=<​​​oauthTokenValue>​​​;WAREHOUSE=[Warehouse];ACCOUNT=[account url];USER=[Your_USER];AUTHENTICATOR=oauth;SCHEMA=[Schema];DB=[Database];",
 |SnowFlakeSettings__IdQuery|The query string to retrieve Vaccine Credential by a RECIP_ID|select * from table_x where id= ?|
 |SnowFlakeSettings__StatusEmailQuery|The query string to call Snowflake function to search by email|select check_credentials_by_email_2(?, ?, ?, ?)|
 |SnowFlakeSettings__StatusPhoneQuery|The query string to call Snowflake function to search by phone|select check_credentials_by_phone_2(?, ?, ?, ?)|
 |SnowFlakeSettings__RelaxedEmailQuery|The query string to call the Snowflake function to search by email with non-strict matching |select check_credentials_by_email_relaxed_3(?, ?, ?, ?)|
 |SnowFlakeSettings__RelaxedPhoneQuery|The query string to call Snowflake function to search by phone with non-strict matching|select check_credentials_by_phone_relaxed_3(?, ?, ?, ?)|
 |SnowFlakeSettings__UseRelaxed|Flag to turn on/off relaxed queries|"0": not use, "1": use|
+|SnowFlakeSettings__ClientId|Snowflake OAuth's client id|47......42|
+|SnowFlakeSettings__ClientSecret|Snowflake OAuth's client secret|rG......hS|
+|SnowFlakeSettings__ClientPassword|Snowflake OAuth's client password|7U.....p&|
+|SnowFlakeSettings__UserName|Snowflake OAuth's user name|sa......onmicrosoft.com|
+|SnowFlakeSettings__MicrosoftOAuthUrl|Microsoft OAuth endpoint to retrieve access token|https://[your url]|
+|SnowFlakeSettings__Scope|Snowflake OAuth's scope|https://[your url/session:role-any]|
 |TwilioSettings__AccountSID|Twilio Account id|AC.......55f|
 |TwilioSettings__AuthToken|Twilio Authorized Token|d3a.....cba|
 |TwilioSettings__FromPhone|Twilio's sender phone number|+183......29|

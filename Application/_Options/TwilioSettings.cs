@@ -11,17 +11,17 @@ namespace Application.Options
     public class TwilioSettings : ISettingsValidate
     {
         [Display(Name = "TwilioSettings.AccountSID")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string AccountSID { get; set; }
 
         [Display(Name = "TwilioSettings.AuthToken")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string AuthToken { get; set; }
         [Display(Name = "TwilioSettings.FromPhone")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string FromPhone { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string SandBox { get; set; }
 
         #region IOptionsValidatable Implementation

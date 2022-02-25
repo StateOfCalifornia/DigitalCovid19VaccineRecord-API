@@ -11,19 +11,19 @@ namespace Application.Options
     public class SendGridSettings : ISettingsValidate
     {
         [Display(Name = "SendGridSettings.Key")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string Key { get; set; }
 
         [Display(Name = "SendGridSettings.Sender")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string Sender { get; set; }
 
         [Display(Name = "SendGridSettings.SenderEmail")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string SenderEmail { get; set; }
 
         [Display(Name = "SendGridSettings.SandBox")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string SandBox { get; set; }
 
         public void Validate()

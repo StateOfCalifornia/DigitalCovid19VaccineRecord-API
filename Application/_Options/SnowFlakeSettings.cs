@@ -22,9 +22,19 @@ namespace Application.Options
 
         public string RelaxedPhoneQuery { get; set; }
         public string RelaxedEmailQuery { get; set; }
-
         public string UseRelaxed { get; set; }
-
+        [Required(AllowEmptyStrings = false)]
+        public string ClientId { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string ClientSecret { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string ClientPassword { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string MicrosoftOAuthUrl { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string UserName { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string Scope { get; set; }
 
         #region IOptionsValidatable Implementation
         public void Validate()
